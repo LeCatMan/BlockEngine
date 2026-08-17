@@ -1,13 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../../external/stb-master/stb_image.h"
-#include "../../Inputs/Inputs.hpp"
+
 #include "RenderingUtilities.hpp"
-#include "../../../external/glad/include/glad/glad.h"
-#include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
-#include <stdbool.h>
-#include "../../Debugger/Debugger.hpp"
-#include <stdlib.h>
-#include <stdio.h>
 
 
 // ########################

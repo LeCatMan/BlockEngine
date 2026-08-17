@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ~/Projects/C/Block-Engine/Block-Engine-Linux
+make clean
+cd ..

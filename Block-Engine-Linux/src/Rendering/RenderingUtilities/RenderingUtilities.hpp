@@ -1,7 +1,15 @@
 #ifndef RENDERINGUTILITIES_HPP
 #define RENDERINGUTILITIES_HPP
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+#include "../../Debugger/Debugger.hpp"
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
+#include "../../Inputs/Inputs.hpp"
+
 
 extern GLFWwindow* Bwindow;
 extern const char *TestFragmentShaderSource;
@@ -68,8 +76,10 @@ class Texture
 class Triangle : public Shape2D
 {
 public:
-    Triangle(Color color): Shape2D(color, "src/Data/Shaders/BasicPerVertexVertexShader.vert", "src/Data/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)
-    {}
+    Triangle(Color color): Shape2D(color, "src/Assets/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)
+    {
+        info("Creating Triangle Resources");
+    }
     
     ~Triangle();
 
@@ -86,7 +96,7 @@ class Square : public Shape2D
 {
     public:
     
-        Square(Color color): Shape2D(color, "src/Data/Shaders/BasicVertexShader.vert", "src/Data/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
+        Square(Color color): Shape2D(color, "src/Assets/Shaders/BasicVertexShader.vert", "src/Assets/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
         {}
         
         ~Square();
@@ -123,14 +133,6 @@ bool WindowShouldClose();
 void CloseWindow();
 void BackGroundColor(Color color, int opacity);
 void RenderingShutDown();
-
-
-//void DrawTriangle();
-//void CreateTriangle(Color color);
-//void DestroyTriangle();
-//void DrawSquare();
-//void CreateSquare(Color color);
-//void DestroySquare();
 
 
 #endif

@@ -1,126 +1,197 @@
 #ifndef MATHUTILITIES_HPP
 #define MATHUTILITIES_HPP
-
-#include <stdio.h>
 #include <stdarg.h>
 
-// ------------------------
-// Types
-// ------------------------
 
-// ------------------------
-// Float
-// ------------------------
+// ########################
+// #        FLOAT         #
+// ########################
 
-// float X , float Y , float Width , float Height.
-typedef struct {
+typedef struct
+{
     float x;
     float y;
     float width;
     float height;
-} Rectanglef;
+} FloatRectangle;
 
-// float X , float Y.
-typedef struct {
+typedef struct
+{
     float x;
     float y;
-} Vector2f;
+} FloatVector2;
 
-// float X , float Y , float Z.
-typedef struct {
+typedef struct
+{
     float x;
     float y;
     float z;
-} Vector3f;
+} FloatVector3;
 
-// float X , float Y , float Z.
-typedef struct {
+typedef struct
+{
     float x;
     float y;
     float z;
     float w;
-} Vector4f;
+} FloatVector4;
 
-// ------------------------
-// Int
-// ------------------------
 
-// int X , int Y , int Width , int Height.
-typedef struct {
+// ########################
+// #         INT          #
+// ########################
+
+typedef struct
+{
     int x;
     int y;
     int width;
     int height;
-} Rectangle;
+} IntRectangle;
 
-// int X , int Y.
-typedef struct {
+typedef struct
+{
     int x;
     int y;
-} Vector2;
+} IntVector2;
 
-// int X , int Y , int Z.
-typedef struct {
+typedef struct
+{
     int x;
     int y;
     int z;
-} Vector3;
+} IntVector3;
 
-// int X , int Y , int Z , int W.
-typedef struct {
+typedef struct
+{
     int x;
     int y;
     int z;
     int w;
-} Vector4;
+} IntVector4;
 
-// ------------------------
-// Inline helper functions
-// ------------------------
+
+// ########################
+// #      2D HELPERS      #
+// ########################
 
 // Get the center of the screen.
-static inline Vector2 CenterOfScreen(Vector2 screen) {
-    return (Vector2){screen.x / 2, screen.y / 2};
+static inline IntVector2 CenterOfScreen(IntVector2 screen)
+{
+    return (IntVector2){
+        screen.x / 2,
+        screen.y / 2
+    };
 }
 
-// Get the half of the number.
-static inline int Half(int number) {
+// Get half of an IntVector2.
+static inline IntVector2 HalfIntVector2(IntVector2 vector)
+{
+    return (IntVector2){
+        vector.x / 2,
+        vector.y / 2
+    };
+}
+
+// Get half of a FloatVector2.
+static inline FloatVector2 HalfFloatVector2(FloatVector2 vector)
+{
+    return (FloatVector2){
+        vector.x / 2.0f,
+        vector.y / 2.0f
+    };
+}
+
+
+// ########################
+// #      3D HELPERS      #
+// ########################
+
+// Get half of an IntVector3.
+static inline IntVector3 HalfIntVector3(IntVector3 vector)
+{
+    return (IntVector3){
+        vector.x / 2,
+        vector.y / 2,
+        vector.z / 2
+    };
+}
+
+// Get half of a FloatVector3.
+static inline FloatVector3 HalfFloatVector3(FloatVector3 vector)
+{
+    return (FloatVector3){
+        vector.x / 2.0f,
+        vector.y / 2.0f,
+        vector.z / 2.0f
+    };
+}
+
+
+// ########################
+// #      4D HELPERS      #
+// ########################
+
+// Get half of an IntVector4.
+static inline IntVector4 HalfIntVector4(IntVector4 vector)
+{
+    return (IntVector4){
+        vector.x / 2,
+        vector.y / 2,
+        vector.z / 2,
+        vector.w / 2
+    };
+}
+
+// Get half of a FloatVector4.
+static inline FloatVector4 HalfFloatVector4(FloatVector4 vector)
+{
+    return (FloatVector4){
+        vector.x / 2.0f,
+        vector.y / 2.0f,
+        vector.z / 2.0f,
+        vector.w / 2.0f
+    };
+}
+
+
+// ########################
+// #    NUMBER HELPERS    #
+// ########################
+
+// Get half of an integer.
+static inline int HalfInt(int number)
+{
     return number / 2;
 }
 
-// Get the half of the Vector2.
-static inline Vector2 HalfV2(Vector2 v) {
-    return (Vector2){v.x / 2, v.y / 2};
+// Get half of a float.
+static inline float HalfFloat(float number)
+{
+    return number / 2.0f;
 }
 
-// Get the half of the Vector3.
-static inline Vector3 HalfV3(Vector3 v) {
-    return (Vector3){v.x / 2, v.y / 2, v.z / 2};
-}
 
-// Get the half of the Vector4.
-static inline Vector4 HalfV4(Vector4 v) {
-    return (Vector4){v.x / 2, v.y / 2, v.z / 2, v.w / 2};
-}
+// ########################
+// #    OTHER HELPERS     #
+// ########################
 
-// ------------------------
-// Float
-// ------------------------
-
-// Get the half of the number.
-static inline float Halff(float number) {
-    return number / 2;
-}
-
-static inline double sum(int count, ...) {
+static inline double Sum(int count, ...)
+{
     va_list args;
     va_start(args, count);
+
     double total = 0.0;
-    for (int i = 0; i < count; i++) {
+
+    for (int i = 0; i < count; ++i)
+    {
         total += va_arg(args, double);
     }
+
     va_end(args);
+
     return total;
 }
+
 
 #endif

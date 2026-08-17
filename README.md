@@ -4,9 +4,72 @@ Block Engine is a free-to-use game engine.
 
 You can use it, modify it, study it, and share it for free. You can also use it to make commercial games, applications, and other products.
 
+## Preview
+
+### Preview Image:
+
+<img width="800" height="632" alt="BlockEngineAlpha0 5Preview" src="https://github.com/user-attachments/assets/01dbb55c-abf5-49b8-8d0a-f74fe671de95" />
+
+### Console Output:
+
+
+<pre><font color="#C061CB"><b>lecatman@daniel</b></font>:<font color="#2A7BDE"><b>~/Projects/C/Block-Engine</b></font>$ ./run
+make: Nothing to be done for &apos;all&apos;.
+./Block-Engine
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Debugger/Logger/Logger.cpp</b>&gt; at line &lt;<b>173</b>&gt;: &lt;<b>Logger initialized: Logs/Log-001.txt</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>11</b>&gt;: &lt;<b>Launching BlockEngine</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.hpp</b>&gt; at line &lt;<b>81</b>&gt;: &lt;<b>Creating Triangle Resources</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>12</b>&gt;: &lt;<b>Entering Game Loop</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>24</b>&gt;: &lt;<b>Closed Window</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>25</b>&gt;: &lt;<b>Exited Game Loop</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>325</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>325</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>19</b>&gt;: &lt;<b>Closing Program</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>22</b>&gt;: &lt;<b>Closed Program</b>&gt;
+<font color="#C061CB"><b>lecatman@daniel</b></font>:<font color="#2A7BDE"><b>~/Projects/C/Block-Engine</b></font>$ 
+</pre> 
+
+
+### Main Example:
+
+```code
+#include "BlockEngine.hpp"
+
+
+int main() {  
+    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE);
+    AudioPlay("src/Assets/Audio/StartUp/start.mp3");
+
+    {
+        Triangle MyTriangle(Color(180,180,180));
+        Square MySquare(Color(155,155,180));
+        
+        info("Entering Game Loop");
+        while (!WindowShouldClose())
+        {
+            if(KeyEvent(BLOCK_KEY_H,BLOCK_PRESS))
+            {
+                AudioPlay("src/Assets/Audio/Sounds/Correct.mp3");
+            }
+            BackGroundColor(Color(255,255,160), 255);
+            MySquare.DrawSquare();
+            MyTriangle.DrawTriangle();
+            UpdateWindow();
+        }
+        info("Closed Window");
+        info("Exited Game Loop");
+    }
+
+    ShutdownBlockEngine();
+    return 0;
+}
+
+```
+
+
 ## Development Status
 
-Block Engine is currently in **Alpha 0.5** and is still actively being developed.
+Block Engine is currently in **Alpha 0.51** and is still actively being developed.
 
 The engine is an early version, so features may change, break, or be replaced as development continues.
 
