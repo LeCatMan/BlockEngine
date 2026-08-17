@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+#include "Rendering/RenderingUtilities/RenderingUtilities.hpp"
+#include "Debugger/Debugger.hpp"
+#include "Audio/Audio.hpp"
+#include "Inputs/Inputs.hpp"
+
+
+void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *WindowTitle, int ExitKey)
+{
+    LoggerInit();
+    info("Launching BlockEngine");
+    InitializeWindow(WindowWidth,WindowHeight, WindowTitle);
+    SetExitKey(ExitKey);
+    AudioInit();
+}
