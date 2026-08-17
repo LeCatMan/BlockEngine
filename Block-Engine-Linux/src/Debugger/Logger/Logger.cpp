@@ -1,5 +1,4 @@
 #include "Logger.hpp"
-#include "../../Debugger/Math/MathUtilities/MathUtilities.hpp"
 
 typedef struct {
     int r;

@@ -1,5 +1,6 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
+#include <stdio.h>
 #include <stdlib.h>
 
 int LoggerInit(void);

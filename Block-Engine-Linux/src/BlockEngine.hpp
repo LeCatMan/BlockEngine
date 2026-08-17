@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "Rendering/RenderingUtilities/RenderingUtilities.hpp"
 #include "Debugger/Debugger.hpp"
 #include "Audio/Audio.hpp"
@@ -13,4 +12,12 @@ void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *Window
     InitializeWindow(WindowWidth,WindowHeight, WindowTitle);
     SetExitKey(ExitKey);
     AudioInit();
+}
+
+void ShutdownBlockEngine()
+{
+    info("Closing Program");
+    RenderingShutDown();
+    AudioShutdown();
+    info("Closed Program");
 }
