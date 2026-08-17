@@ -1,4 +1,0 @@
-[INFO] -> Info in <src/Debugger/Logger/Logger.cpp> at line <175>: <Logger initialized: Logs/Log-015.txt>
-[INFO] -> Info in <src/BlockEngine.hpp> at line <12>: <Launching BlockEngine>
-[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <331>: <Destroyed the Shapes resources>
-[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <331>: <Destroyed the Shapes resources>
