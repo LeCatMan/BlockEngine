@@ -1,5 +1,0 @@
-[INFO] -> Info in <src/Debugger/Logger/Logger.cpp> at line <176>: <Logger initialized: Logs/Log-004.txt>
-[INFO] -> Info in <src/BlockEngine.hpp> at line <12>: <Launching BlockEngine>
-[ERROR] -> Error in <src/BlockEngine.cpp> at line <11>: <error>
-[TRACE] -> Trace in <src/BlockEngine.cpp> at line <12>: <trace>
-[INFO] -> Info in <src/BlockEngine.cpp> at line <13>: <info>
