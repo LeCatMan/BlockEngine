@@ -13,21 +13,21 @@ You can use it, modify it, study it, and share it for free. You can also use it 
 ### Console Output:
 
 
-<pre><font color="#C061CB"><b>lecatman@daniel</b></font>:<font color="#2A7BDE"><b>~/Projects/C/Block-Engine</b></font>$ ./run
+<pre><font color="#C061CB"><b>lecatman@daniel7</b></font>:<font color="#2A7BDE"><b>~/Projects/C/Block-Engine</b></font>$ run
 make: Nothing to be done for &apos;all&apos;.
 ./Block-Engine
 [<b>INFO</b>] -&gt; Info in &lt;<b>src/Debugger/Logger/Logger.cpp</b>&gt; at line &lt;<b>173</b>&gt;: &lt;<b>Logger initialized: Logs/Log-001.txt</b>&gt;
 [<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>11</b>&gt;: &lt;<b>Launching BlockEngine</b>&gt;
 [<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.hpp</b>&gt; at line &lt;<b>81</b>&gt;: &lt;<b>Creating Triangle Resources</b>&gt;
 [<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>12</b>&gt;: &lt;<b>Entering Game Loop</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>24</b>&gt;: &lt;<b>Closed Window</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>25</b>&gt;: &lt;<b>Exited Game Loop</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>325</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>325</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>19</b>&gt;: &lt;<b>Closing Program</b>&gt;
-[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>22</b>&gt;: &lt;<b>Closed Program</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>32</b>&gt;: &lt;<b>Closed Window</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.cpp</b>&gt; at line &lt;<b>33</b>&gt;: &lt;<b>Exited Game Loop</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>326</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/Rendering/RenderingUtilities/RenderingUtilities.cpp</b>&gt; at line &lt;<b>326</b>&gt;: &lt;<b>Destroyed the Shapes resources</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>20</b>&gt;: &lt;<b>Closing Program</b>&gt;
+[<b>INFO</b>] -&gt; Info in &lt;<b>src/BlockEngine.hpp</b>&gt; at line &lt;<b>23</b>&gt;: &lt;<b>Closed Program</b>&gt;
 <font color="#C061CB"><b>lecatman@daniel</b></font>:<font color="#2A7BDE"><b>~/Projects/C/Block-Engine</b></font>$ 
-</pre> 
+</pre>
 
 
 ### Main Example:
@@ -36,14 +36,14 @@ make: Nothing to be done for &apos;all&apos;.
 #include "BlockEngine.hpp"
 
 
-int main() {  
+int main() {
     InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE);
     AudioPlay("src/Assets/Audio/StartUp/start.mp3");
 
     {
         Triangle MyTriangle(Color(180,180,180));
         Square MySquare(Color(155,155,180));
-        
+
         info("Entering Game Loop");
         while (!WindowShouldClose())
         {
@@ -87,7 +87,6 @@ The main restriction is simple:
 
 | Action | Allowed? |
 |---|:---:|
-| Independently create and sell a competing engine             | **YES** |
 | Use Block Engine freely                                      | **YES** |
 | Modify Block Engine                                          | **YES** |
 | Share Block Engine for free                                  | **YES** |
@@ -100,3 +99,5 @@ The main restriction is simple:
 | Commercially host/provide the engine remotely                | **NO** |
 | Hide the engine behind a wrapper or similar arrangement      | **NO** |
 | Use a fake/minimal "game" to commercially provide the engine | **NO** |
+
+> This License does not restrict anyone from independently creating software that competes with Block Engine, provided that Block Engine or a Modified Engine is not used as the basis for that software.
