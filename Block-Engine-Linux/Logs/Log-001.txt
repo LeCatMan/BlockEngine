@@ -2,9 +2,9 @@
 [INFO] -> Info in <src/BlockEngine.hpp> at line <11>: <Launching BlockEngine>
 [INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.hpp> at line <81>: <Creating Triangle Resources>
 [INFO] -> Info in <src/BlockEngine.cpp> at line <12>: <Entering Game Loop>
-[INFO] -> Info in <src/BlockEngine.cpp> at line <24>: <Closed Window>
-[INFO] -> Info in <src/BlockEngine.cpp> at line <25>: <Exited Game Loop>
-[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <325>: <Destroyed the Shapes resources>
-[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <325>: <Destroyed the Shapes resources>
-[INFO] -> Info in <src/BlockEngine.hpp> at line <19>: <Closing Program>
-[INFO] -> Info in <src/BlockEngine.hpp> at line <22>: <Closed Program>
+[INFO] -> Info in <src/BlockEngine.cpp> at line <32>: <Closed Window>
+[INFO] -> Info in <src/BlockEngine.cpp> at line <33>: <Exited Game Loop>
+[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <326>: <Destroyed the Shapes resources>
+[INFO] -> Info in <src/Rendering/RenderingUtilities/RenderingUtilities.cpp> at line <326>: <Destroyed the Shapes resources>
+[INFO] -> Info in <src/BlockEngine.hpp> at line <20>: <Closing Program>
+[INFO] -> Info in <src/BlockEngine.hpp> at line <23>: <Closed Program>

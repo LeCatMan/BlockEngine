@@ -10,6 +10,7 @@ void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *Window
     LoggerInit();
     info("Launching BlockEngine");
     InitializeWindow(WindowWidth,WindowHeight, WindowTitle);
+    InitializeInput();
     SetExitKey(ExitKey);
     AudioInit();
 }

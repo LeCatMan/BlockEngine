@@ -47,6 +47,8 @@ int InitializeWindow(int WindowWidth,int WindowHeight,const char *WindowTitle)
     }
     
     glfwSetFramebufferSizeCallback(Bwindow, framebuffer_size_callback);
+
+    glfwSwapInterval(1);
     
     return 0;
 }
@@ -84,11 +86,10 @@ bool WindowShouldClose()
 // process rendering events.
 void UpdateWindow()
 {
+    UpdateInput();
     if (KeyEvent(ExitKey,BLOCK_PRESS))
     {CloseWindow();}
-    
     glfwSwapBuffers(Bwindow);// Swaps the front and back buffers of the specified window.
-    glfwPollEvents();// Processes all pending events.
 }
 
 

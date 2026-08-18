@@ -12,14 +12,22 @@ int main() {
         info("Entering Game Loop");
         while (!WindowShouldClose())
         {
-            if(KeyEvent(BLOCK_KEY_H,BLOCK_PRESS))
+            UpdateWindow();
+            if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
+            {
+                AudioPlay("src/Assets/Audio/Sounds/Correct.mp3");
+            }
+            if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
+            {
+                AudioPlay("src/Assets/Audio/Sounds/Correct.mp3");
+            }
+            if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
                 AudioPlay("src/Assets/Audio/Sounds/Correct.mp3");
             }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();
             MyTriangle.DrawTriangle();
-            UpdateWindow();
         }
         info("Closed Window");
         info("Exited Game Loop");
