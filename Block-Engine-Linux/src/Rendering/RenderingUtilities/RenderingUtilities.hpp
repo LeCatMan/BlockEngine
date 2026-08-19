@@ -40,7 +40,7 @@ struct Color
 
 class Shader2D
 {
-    private:
+private:
     char *vertexshadersource;
     char *fragmentshadersource;
     public:
@@ -53,34 +53,38 @@ class Shader2D
 // Common 2D objects
 class Shape2D
 {
-    protected:
-        char VertexShader[256];
-        char FragmentShader[256];
-        unsigned int Shape2DVAO;
-        unsigned int Shape2DVBO;
-        unsigned int Shape2DEBO;
-        unsigned int Shape2DShader;
-    public:
-        Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture);
-        ~Shape2D();
-        void DrawShape2D(size_t ShapeIndicesSize);
+protected:
+    char VertexShader[256];
+    char FragmentShader[256];
+    unsigned int Shape2DVAO;
+    unsigned int Shape2DVBO;
+    unsigned int Shape2DEBO;
+    unsigned int Shape2DShader;
+public:
+    Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture);
+    ~Shape2D();
+    void DrawShape2D(size_t ShapeIndicesSize);
 };
 
 class Texture
 {
-    public:
+public:
 
 };
+
+// ========================
+// |        Shapes        |
+// ========================
 
 // Triangle
 class Triangle : public Shape2D
 {
 public:
-    Triangle(Color color): Shape2D(color, "src/Assets/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)
+    Triangle(Color color) : Shape2D(color, "src/Assets/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)
     {
         info("Creating Triangle Resources");
     }
-    
+
     ~Triangle();
 
     // Draws the triangle.
@@ -88,24 +92,23 @@ public:
     {
         DrawShape2D(sizeof(TriangleIndices) / sizeof(TriangleIndices[0]));
     }
-
 };
 
 // square
 class Square : public Shape2D
 {
-    public:
-    
-        Square(Color color): Shape2D(color, "src/Assets/Shaders/BasicVertexShader.vert", "src/Assets/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
-        {}
-        
-        ~Square();
+public:
+    Square(Color color) : Shape2D(color, "src/Assets/Shaders/BasicVertexShader.vert", "src/Assets/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
+    {
+    }
 
-        // Draws the square.
-        void DrawSquare()
-        {
-            DrawShape2D(sizeof(SquareIndices) / sizeof(SquareIndices[0]));
-        }
+    ~Square();
+
+    // Draws the square.
+    void DrawSquare()
+    {
+        DrawShape2D(sizeof(SquareIndices) / sizeof(SquareIndices[0]));
+    }
 };
 
 // ########################
@@ -115,15 +118,15 @@ class Square : public Shape2D
 // Common 3D objects
 class Shape3D
 {
-    protected:
-        unsigned int Shape3DVAO;
-        unsigned int Shape3DVBO;
-        unsigned int Shape3DEBO;
-        unsigned int Shape3DShader;
-    public:
-        //Shape3D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize);
-        //~Shape3D();
-        //void DrawShape3D(size_t ShapeIndicesSize);
+protected:
+    unsigned int Shape3DVAO;
+    unsigned int Shape3DVBO;
+    unsigned int Shape3DEBO;
+    unsigned int Shape3DShader;
+public:
+    //Shape3D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize);
+    //~Shape3D();
+    //void DrawShape3D(size_t ShapeIndicesSize);
 };
 
 
