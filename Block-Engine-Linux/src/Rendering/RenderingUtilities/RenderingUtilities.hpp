@@ -10,15 +10,10 @@
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
 #include "../../Inputs/Inputs.hpp"
 
-
 extern GLFWwindow* Bwindow;
 extern const char *TestFragmentShaderSource;
 extern const char *TestVertexShaderSource;
-extern float TriangleVertices[26];
-extern float SquareVertices[12];
-extern const unsigned int SquareIndices[6];
-extern const unsigned int TriangleIndices[3];
-extern float TrianglePerVertexColorVertices[18];
+class Shape2D;
 
 struct Color
 {
@@ -32,6 +27,18 @@ struct Color
         this->g = g / 255.0f;
         this->b = b / 255.0f;
     }
+};
+
+class Texture
+{
+private:
+    unsigned int texture;
+public:
+    void CreateTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter);
+    void LoadTexture(Shape2D& shape);
+    void UnloadTexture();
+    ~Texture();
+    
 };
 
 // ########################
@@ -60,16 +67,11 @@ protected:
     unsigned int Shape2DVBO;
     unsigned int Shape2DEBO;
     unsigned int Shape2DShader;
+    friend class Texture;
 public:
     Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture);
     ~Shape2D();
     void DrawShape2D(size_t ShapeIndicesSize);
-};
-
-class Texture
-{
-public:
-
 };
 
 // ========================
@@ -77,10 +79,15 @@ public:
 // ========================
 
 // Triangle
+extern const float TrianglePerVertexColor[18];
+extern const float TrianglePosColorUV[24];
+extern const float TriangleVertices[9];
+extern const unsigned int TriangleIndices[3];
+
 class Triangle : public Shape2D
 {
 public:
-    Triangle(Color color) : Shape2D(color, "src/Assets/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)
+    Triangle(Color color) : Shape2D(color, "src/Assets/BlockEngine/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/BlockEngine/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColor, sizeof(TrianglePerVertexColor), TriangleIndices, sizeof(TriangleIndices), true, false)
     {
         info("Creating Triangle Resources");
     }
@@ -95,10 +102,15 @@ public:
 };
 
 // square
+extern const float SquarePerVertexColor[24];
+extern const float SquarePosColorUV[32];
+extern const float SquareVertices[12];
+extern const unsigned int SquareIndices[6];
+
 class Square : public Shape2D
 {
 public:
-    Square(Color color) : Shape2D(color, "src/Assets/Shaders/BasicVertexShader.vert", "src/Assets/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
+    Square(Color color) : Shape2D(color, "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
     {
     }
 
