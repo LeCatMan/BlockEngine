@@ -1,0 +1,26 @@
+# Build output
+*.o
+*.a
+*.so
+Block-Engine
+
+# Build directories
+build/
+cmake-build-*/
+
+# Logs / runtime output
+Logs/
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Editor / IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
