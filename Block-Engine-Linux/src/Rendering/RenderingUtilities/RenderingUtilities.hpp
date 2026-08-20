@@ -53,7 +53,7 @@ private:
     public:
     unsigned int VertexShader;
     unsigned int FragmentShader;
-    Shader2D(char *VertexShaderSourcePath, char *fragmentShaderSourcePath);
+    Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath);
     ~Shader2D();
 };
 

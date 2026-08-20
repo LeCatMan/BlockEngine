@@ -62,7 +62,7 @@ void RenderingShutDown()
 // Changes the background color.
 void BackGroundColor(Color color, int opacity)
 {
-    glClearColor((color.r), (color.g), (color.b), (opacity / 255));
+    glClearColor((color.r), (color.g), (color.b), (opacity / 255.0f));
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -306,7 +306,6 @@ const unsigned int SquareIndices[6] = {
 
 
 
-
 // ########################
 // #      Rendering       #
 // ########################
@@ -376,9 +375,14 @@ Texture::~Texture()
 // ========================
 
 // Create a fragment and vertex shader with custom shader code.
-Shader2D::Shader2D(char *VertexShaderSourcePath, char *fragmentShaderSourcePath)
+Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 {
     vertexshadersource = GetFileText(VertexShaderSourcePath);
+
+    if(!vertexshadersource)
+    {
+        error("Invalid Path (VertexShaderSourcePath)");
+    };
 
     VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
     glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
@@ -397,7 +401,12 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *fragmentShaderSourcePath)
         error(buffer);
     }
 
-    fragmentshadersource = GetFileText(fragmentShaderSourcePath);
+    fragmentshadersource = GetFileText(FragmentShaderSourcePath);
+
+    if(!fragmentshadersource)
+    {
+        error("Invalid Path (FragmentShaderSourcePath)");
+    };
 
     FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(FragmentShader, 1, &fragmentshadersource, NULL);
