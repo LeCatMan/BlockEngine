@@ -91,34 +91,216 @@ void UpdateWindow()
 // ########################
 // #       Examples       #
 // ########################
+//
+// Basic shapes provided by Block Engine.
+//
+// These shapes are ready to use and cover common
+// use cases. You do not need to create your own
+// vertex data unless you need a shape that is not
+// provided here.
+//
+// The data is kept readable so you can understand
+// and modify the shapes if needed.
 
-float TrianglePerVertexColorVertices[18] = {
-    // positions         // colors
-    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // top
+const float TrianglePerVertexColor[18] = {
+    // bottom right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      1.0f, 0.0f, 0.0f,
+
+    // bottom left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      0.0f, 1.0f, 0.0f,
+
+    // top vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.0f, 0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      0.0f, 0.0f, 1.0f
 };
 
-float TriangleVertices[26] = {
-    // positions         // colors          // uv
-    0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bottom left
-    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f    // top
+const float TrianglePosColorUV[24] = {
+    // bottom right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 1.0f, 0.0f, 0.0f
+   // uv
+   //|  x  |  y  |
+    , 0.0f, 0.0f,
+
+
+   // bottom left vertex
+
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 0.0f, 1.0f, 0.0f
+   // uv
+   //|  x  |  y  |
+    , 1.0f, 0.0f,
+
+
+    // top vertex
+
+   // positions               
+   //  x  |  y  |  z  |
+     0.0f,  0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 0.0f, 0.0f, 1.0f
+   // uv
+   //|  x  |  y  |
+    , 0.5f, 1.0f,
 };
 
-float SquareVertices[12] = {
-    -0.5f, -0.5f, 0.0f, // bottom left
-    0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, 0.5f, 0.0f,  // top left
-    0.5f, 0.5f, 0.0f    // top right
+const float TriangleVertices[9] = {
+    // bottom right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f,
+
+    // bottom left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f,
+
+    // top vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.0f, 0.5f, 0.0f,
+};
+
+const unsigned int TriangleIndices[3] = {
+    0, 1, 2
+};
+
+
+const float SquarePerVertexColor[24] = {
+    // bottom left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      1.0f, 0.0f, 0.0f,
+
+    // bottom right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      0.0f, 1.0f, 0.0f,
+
+    // top left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f,  0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      0.0f, 0.0f, 1.0f,
+
+    // top right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f,  0.5f, 0.0f,
+   // colors
+   //|  r  |  g  |  b  |
+      1.0f, 1.0f, 0.0f
+};
+
+const float SquarePosColorUV[32] = {
+    // bottom left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 1.0f, 0.0f, 0.0f
+   // uv
+   //|  x  |  y  |
+    , 0.0f, 0.0f,
+
+
+    // bottom right vertex
+
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 0.0f, 1.0f, 0.0f
+   // uv
+   //|  x  |  y  |
+    , 1.0f, 0.0f,
+
+
+    // top left vertex
+
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f,  0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 0.0f, 0.0f, 1.0f
+   // uv
+   //|  x  |  y  |
+    , 0.0f, 1.0f,
+
+
+    // top right vertex
+
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f,  0.5f, 0.0f
+   // colors
+   //|  r  |  g  |  b  |
+    , 1.0f, 1.0f, 0.0f
+   // uv
+   //|  x  |  y  |
+    , 1.0f, 1.0f,
+};
+
+const float SquareVertices[12] = {
+    // bottom left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f, -0.5f, 0.0f,
+
+    // bottom right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f, -0.5f, 0.0f,
+
+    // top left vertex
+   // positions               
+   //  x  |  y  |  z  |
+    -0.5f,  0.5f, 0.0f,
+
+    // top right vertex
+   // positions               
+   //  x  |  y  |  z  |
+     0.5f,  0.5f, 0.0f
 };
 
 const unsigned int SquareIndices[6] = {
     0, 1, 2,
-    1, 3, 2};
-
-const unsigned int TriangleIndices[3] = {
-    0, 1, 2};
+    1, 3, 2
+};
 
 
 
@@ -128,18 +310,86 @@ const unsigned int TriangleIndices[3] = {
 // ########################
 // #      Rendering       #
 // ########################
+// ========================
+// |       Texture        |
+// ========================
+
+//GL_NEAREST_MIPMAP_NEAREST
+void Texture::CreateTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter)
+{
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinifyFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagnifyingFilter);
+
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(ImagePath, &width, &height, &nrChannels, 0);
+
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        error("Failed to generate texture!");
+    }
+
+    stbi_image_free(data);
+};
+
+//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+void Texture::LoadTexture(Shape2D& shape)
+{
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(shape.Shape2DVAO);
+};
+
+void Texture::UnloadTexture()
+{
+    if (texture != 0)
+    {
+        glDeleteTextures(1, &texture);
+        texture = 0;
+    }
+    else
+    {
+        warning("The texture is already been unloaded!");
+    }
+}
+
+Texture::~Texture()
+{
+    if (texture != 0)
+    {
+        UnloadTexture();
+    }
+};
+
+
+// ========================
+// |       Shader2D       |
+// ========================
 
 // Create a fragment and vertex shader with custom shader code.
 Shader2D::Shader2D(char *VertexShaderSourcePath, char *fragmentShaderSourcePath)
 {
     vertexshadersource = GetFileText(VertexShaderSourcePath);
+
     VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
     glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
     glCompileShader(VertexShader);                              // compiles the shader ?
+
     int success;
     char infoLog[512];
     char buffer[548];
+
     glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
+
     if (!success)
     {
         glGetShaderInfoLog(VertexShader, 512, NULL, infoLog);
@@ -148,10 +398,13 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *fragmentShaderSourcePath)
     }
 
     fragmentshadersource = GetFileText(fragmentShaderSourcePath);
+
     FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(FragmentShader, 1, &fragmentshadersource, NULL);
     glCompileShader(FragmentShader);
+
     glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
+
     if (!success)
     {
         glGetShaderInfoLog(FragmentShader, 512, NULL, infoLog);
@@ -164,7 +417,12 @@ Shader2D::~Shader2D()
 {
     free(vertexshadersource);
     free(fragmentshadersource);
-}
+};
+
+
+// ========================
+// |         VAO          |
+// ========================
 
 // Creates vertex array object.
 void CreateVAO(unsigned int *VAO)
@@ -173,17 +431,24 @@ void CreateVAO(unsigned int *VAO)
     glBindVertexArray(*VAO);
 }
 
+
+// ========================
+// |         VBO          |
+// ========================
+
 // Creates vertex buffer object.
 void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVertexColor, bool texture)
 {
     size_t stride =
-        PerVertexColor && texture ? 8 * sizeof(float) : PerVertexColor ? 6 * sizeof(float)
-                                                    : texture          ? 5 * sizeof(float)
-                                                                       : 3 * sizeof(float);
+        PerVertexColor && texture ? 8 * sizeof(float)
+        : PerVertexColor ? 6 * sizeof(float)
+        : texture          ? 5 * sizeof(float)
+        : 3 * sizeof(float);
 
     glGenBuffers(1, VBO);
     glBindBuffer(GL_ARRAY_BUFFER, *VBO);
     glBufferData(GL_ARRAY_BUFFER, Size, Vertices, GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
 
     if (PerVertexColor && !texture)
@@ -193,13 +458,14 @@ void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVe
 
     if (texture)
     {
-
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(PerVertexColor && texture ? 6 * sizeof(float) : 3 * sizeof(float)));
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        float TBC[3] = {1.0f, 0.0f, 1.0f};
+
+        float TBC[4] = {1.0f, 0.0f, 1.0f, 1.0f};// this is the color of the texture
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, TBC);
     }
 
@@ -208,6 +474,11 @@ void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVe
     glEnableVertexAttribArray(2);
 }
 
+
+// ========================
+// |         EBO          |
+// ========================
+
 // Creates element buffer object.
 void CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO)
 {
@@ -215,6 +486,11 @@ void CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, Size, Indices, GL_STATIC_DRAW);
 }
+
+
+// ========================
+// |    Shader Program    |
+// ========================
 
 // this is were we attach and link things to the program.
 void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int FragmentShader)
@@ -241,7 +517,11 @@ void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int
     }
 }
 
-// Cleanup
+
+// ========================
+// |       Cleanup        |
+// ========================
+
 void DestroyVBO(unsigned int VBO)
 {
     glDeleteBuffers(1, &VBO);
@@ -261,7 +541,6 @@ void DestroyShader(unsigned int Shader)
 {
     glDeleteProgram(Shader);
 }
-
 
 
 
