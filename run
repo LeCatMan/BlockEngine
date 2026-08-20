@@ -1,6 +1,5 @@
 #!/bin/bash
- 
-cd ~/Projects/C/Block-Engine/Block-Engine-Linux
+
+cd Block-Engine-Linux
 make && make run
 cd ..
-

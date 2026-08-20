@@ -79,7 +79,7 @@ int main() {
 
 ## Development Status
 
-Block Engine is currently in **Alpha 0.57** and is still actively being developed.
+Block Engine is currently in **Alpha 0.58** and is still actively being developed.
 
 The engine is an early version, so features may change, break, or be replaced as development continues.
 

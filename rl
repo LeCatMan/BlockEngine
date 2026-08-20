@@ -1,4 +1,3 @@
 #!/bin/bash
 
-rm ~/Projects/C/Block-Engine/Block-Engine-Linux/Logs/*
- 
+rm Block-Engine-Linux/Logs/*
