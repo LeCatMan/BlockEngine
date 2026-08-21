@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: ./CompileCode <source.cpp> [asan] [debug]"
+    exit 1
+fi
+
+CXXFLAGS=""
+
+for arg in "${@:2}"; do
+    case "$arg" in
+        asan)
+            CXXFLAGS="$CXXFLAGS -fsanitize=address"
+            ;;
+        debug)
+            CXXFLAGS="$CXXFLAGS -g"
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Usage: ./CompileCode <source.cpp> [asan] [debug]"
+            exit 1
+            ;;
+    esac
+done
+
+ENGINE_OBJ=$(find BlockEngine/src -name "*.o" ! -name "BlockEngine.o")
+GLAD_OBJ="BlockEngine/external/glad/src/glad.o"
+
+g++ "$1" \
+    $ENGINE_OBJ \
+    $GLAD_OBJ \
+    $CXXFLAGS \
+    -IBlockEngine/src \
+    -IBlockEngine/external/glad/include \
+    -lGL -lglfw -ldl -lm -lcrypto \
+    -o "${1%.cpp}"

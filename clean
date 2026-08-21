@@ -1,6 +1,0 @@
-#!/bin/bash
-
-
-cd Block-Engine-Linux
-make clean
-cd ..

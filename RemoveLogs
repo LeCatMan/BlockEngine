@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm BlockEngine/Logs/*
+rm Examples/Logs/*

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd Examples
+make -f Example.mk && make -f Example.mk run
+cd ..

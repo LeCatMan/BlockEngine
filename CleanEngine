@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+cd BlockEngine
+make -f BlockEngine.mk clean
+cd ..
