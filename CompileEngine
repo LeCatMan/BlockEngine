@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd BlockEngine
+make -f BlockEngine.mk && make -f BlockEngine.mk run
+cd ..
