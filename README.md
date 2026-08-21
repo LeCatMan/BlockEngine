@@ -4,7 +4,7 @@
 
 > **Simplicity when you want it. Control when you need it.**
 
-🚧 **Block Engine is currently in Alpha 0.58 and under active development.**
+🚧 **Block Engine is currently in Alpha 0.6 and under active development.**
 
 ## 🎮 What is Block Engine?
 
