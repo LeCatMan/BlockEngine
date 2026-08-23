@@ -10,13 +10,15 @@
 
 Block Engine is a custom-made game engine written in **C++ and C**, currently targeting **Linux**.
 
+Block Engine provides a simple interface for building games through **its C and C++ API**, while still giving developers control over the engine.
+
 The project is focused on building the core systems needed for **2D and 3D game development**.
 
 ---
 
 ## Preview
 
-<img width="800" height="632" alt="BlockEngineAlpha0 5Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.6Preview.png" />
+<img width="800" height="632" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.6Preview.png" />
 
 ---
 
@@ -28,7 +30,7 @@ The project is focused on building the core systems needed for **2D and 3D game 
 * 🎮 Keyboard input and key events
 * 🔊 Audio playback
 * 📝 Logging and debugging utilities
-* 🎯 C++ and C API development
+* 🎯 C and C++ API
 * 🐧 Linux support
 
 ---

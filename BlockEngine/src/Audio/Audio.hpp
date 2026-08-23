@@ -5,19 +5,28 @@
 #include "../Debugger/Debugger.hpp"
 #include <stdio.h>
 
-
-// miniaudio engine object
+#define DEFAULT_MASTER_VOLUME 1.0f
+#define DEFAULT_VOLUME 1.0f
+#define DEFAULT_PITCH 1.0f
 
 extern ma_engine engine;
 extern bool init;
 
+/**
+ * Audio Object
+ *
+ * Audio objects provide sound for entities and other objects.
+ *
+ * Example:
+ * Audio AudioObject[2];
+ */
 class Audio
 {
 protected:
     ma_sound sound;
     bool sound_loaded = false;
 public:
-    void LoadSound(const char *filename);
+    void LoadSound(const char *filename, float volume, bool looping, float pitch);
     void PlaySound();
     void UnloadSound();
     ~Audio();
@@ -25,7 +34,7 @@ public:
 
 
 // Initialize the Audio engine with default settings
-inline void InitializeAudio()
+inline void InitializeAudio(float volume)
 {
     if (ma_engine_init(NULL, &engine) != MA_SUCCESS)
     {
@@ -33,7 +42,7 @@ inline void InitializeAudio()
         init = false;
         return;
     }
-
+    ma_engine_set_volume(&engine, volume);
     init = true;
     info("Audio engine initialized!");
 }

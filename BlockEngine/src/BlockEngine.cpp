@@ -1,14 +1,14 @@
-#include "BlockEngine.hpp"
+#include "BlockEngine.hpp"// we include this because we need it :D
 
-
-int main() {  
-    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE);
-    //AudioPlay("src/Assets/BlockEngine/Audio/StartUp/start.mp3");
+int main() {
+    // here we initialize the (Logger, Window, Input, Audio) and set the exit key.
+    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, 0.1f);
 
     {
-        Audio UI[2];
-        UI[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3");
-        UI[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3");
+        // This is an audio object it make   
+        Audio AudioObject[2];
+        AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
+        AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
         Triangle MyTriangle(Color(180,180,180));
         Square MySquare(Color(155,155,180));
 
@@ -18,15 +18,15 @@ int main() {
             UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                UI[0].PlaySound();
+                AudioObject[0].PlaySound();
             }
             if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
             {
-                UI[1].PlaySound();
+                AudioObject[1].PlaySound();
             }
             if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
-                UI[1].PlaySound();
+                AudioObject[1].PlaySound();
             }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();
