@@ -40,51 +40,49 @@ The project is focused on building the core systems needed for **2D and 3D game 
 A basic Block Engine program currently looks like this:
 
 ```cpp
-#include "BlockEngine.hpp"
+#include "BlockEngine.hpp"// we include this because we need it :D
 
-int main()
-{
-    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE);
+// Hover over functions/classes to see they works.
 
-    AudioPlay("src/Assets/BlockEngine/Audio/StartUp/start.mp3");
+int main() {
+    // here we initialize the (Logger, Window, Input, Audio) and set the exit key.
+    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, DEFAULT_MASTER_VOLUME);
 
     {
-        Triangle MyTriangle(Color(180, 180, 180));
-        Square MySquare(Color(155, 155, 180));
+        // Audio objects can be used for any object that needs audio.
+        Audio AudioObject[2];
+
+        AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
+        AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
+        
+        Triangle MyTriangle(Color(180,180,180));
+        Square MySquare(Color(155,155,180));
 
         info("Entering Game Loop");
-
         while (!WindowShouldClose())
         {
             UpdateWindow();
-
-            if (KeyEvent(BLOCK_KEY_F, BLOCK_PRESS))
+            if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                AudioPlay("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3");
+                AudioObject[0].PlaySound();
             }
-
-            if (KeyEvent(BLOCK_KEY_G, BLOCK_RELEASE))
+            if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
             {
-                AudioPlay("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3");
+                AudioObject[1].PlaySound();
             }
-
-            if (KeyEvent(BLOCK_KEY_H, BLOCK_REPEAT))
+            if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
-                AudioPlay("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3");
+                AudioObject[1].PlaySound();
             }
-
-            BackGroundColor(Color(255, 255, 160), 255);
-
+            BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();
             MyTriangle.DrawTriangle();
         }
-
         info("Closed Window");
         info("Exited Game Loop");
     }
 
     ShutdownBlockEngine();
-
     return 0;
 }
 ```
