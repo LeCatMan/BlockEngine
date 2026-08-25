@@ -258,8 +258,6 @@ int Template(const char* msg, const char* file, int line, const char* Ctype, con
 }
 
 
-
-// ------------------------
 // Log error with the file and line location.
 int Error(const char* msg, const char* file, int line)
 {
