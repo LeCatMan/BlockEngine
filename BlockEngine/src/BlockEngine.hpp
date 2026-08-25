@@ -1,5 +1,4 @@
-#ifndef BLOCKENGINE_HPP
-#define BLOCKENGINE_HPP
+#pragma once
 #include "Rendering/RenderingUtilities/RenderingUtilities.hpp"
 #include "Debugger/Debugger.hpp"
 #include "Audio/Audio.hpp"
@@ -50,5 +49,3 @@ inline void ShutdownBlockEngine()
 
     LoggerShutdown();
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MATHUTILITIES_HPP
-#define MATHUTILITIES_HPP
+#pragma once
 #include <stdarg.h>
 
 
@@ -192,6 +191,3 @@ static inline double Sum(int count, ...)
 
     return total;
 }
-
-
-#endif

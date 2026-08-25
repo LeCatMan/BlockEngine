@@ -1,5 +1,4 @@
-#ifndef RENDERINGUTILITIES_HPP
-#define RENDERINGUTILITIES_HPP
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -234,6 +233,3 @@ bool WindowShouldClose();
 void CloseWindow();
 void BackGroundColor(Color color, int opacity);
 void RenderingShutDown();
-
-
-#endif

@@ -22,3 +22,6 @@ Logs/
 
 # OS files
 .DS_Store
+
+# Ignore generated asset headers
+BlockEngine/src/Assets/BlockEngine/GeneratedAssets/

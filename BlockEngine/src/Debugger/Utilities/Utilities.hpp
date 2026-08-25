@@ -1,5 +1,4 @@
-#ifndef UTILITIES_HPP
-#define UTILITIES_HPP
+#pragma once
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,5 +8,3 @@
 
 char *CurrentRunningPath();
 char *GetFileText(const char *filename);
-
-#endif

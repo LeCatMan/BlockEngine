@@ -2,7 +2,7 @@
 
 int main() {
     // here we initialize the (Logger, Window, Input, Audio) and set the exit key.
-    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, 0.1f);
+    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, 1.0f);
 
     {
         // This is an audio object it make   
@@ -18,15 +18,19 @@ int main() {
             UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                AudioObject[0].PlaySound();
+                AudioObject[0].OverlappingSound();
+                AudioObject[0].OverlappingSound();
+                AudioObject[0].OverlappingSound();
+                AudioObject[0].OverlappingSound();
+                AudioObject[0].OverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
             {
-                AudioObject[1].PlaySound();
+                AudioObject[1].NoneOverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
-                AudioObject[1].PlaySound();
+                AudioObject[1].NoneOverlappingSound();
             }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();

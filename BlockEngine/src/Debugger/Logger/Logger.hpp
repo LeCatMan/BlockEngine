@@ -1,7 +1,8 @@
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <string.h>
 
 int LoggerInit(void);
 int LoggerShutdown(void);
@@ -21,6 +22,3 @@ int Debug(const char* msg, const char* file, int line);
 #define warning(msg) Warning(msg, __FILE__, __LINE__)
 // Log debug with the file and line location.
 #define debug(msg) Debug(msg, __FILE__, __LINE__)
-
-
-#endif

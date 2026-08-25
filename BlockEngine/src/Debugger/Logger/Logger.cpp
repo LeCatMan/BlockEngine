@@ -4,26 +4,27 @@ typedef struct {
     int r;
     int g;
     int b;
-} C;
+} LColor;
 
 // ########################
-// #        C         #
+// #       Colors         #
 // ########################
-const C LIGHTGRAY = {144,144,144};
-const C DARKGRAY = {80,80,80};
-const C BLACK = {0,0,0};
-const C RED = {255,0,0};
-const C PINK = {255,0,2555};
-const C LIGHTPURPLE = {180,0,255};
-const C PURPLE = {120,0,0};
-const C BLUE = {0,0,255};
-const C LIGHTBLUE = {44,135,255};
-const C CYAN = {0,255,255};
-const C BLUEGREEN = {0,255,100};
-const C GREEN = {180,0,255};
-const C YELLOWGREEN = {120,255,0};
-const C YELLOW = {255,255,0};
-const C ORANGE = {255,130,0};
+
+const LColor LIGHTGRAY = {144,144,144};
+const LColor DARKGRAY = {80,80,80};
+const LColor BLACK = {0,0,0};
+const LColor RED = {255,0,0};
+const LColor PINK = {255,0,255};
+const LColor LIGHTPURPLE = {180,0,255};
+const LColor PURPLE = {120,0,0};
+const LColor BLUE = {0,0,255};
+const LColor LIGHTBLUE = {44,135,255};
+const LColor CYAN = {0,255,255};
+const LColor BLUEGREEN = {0,255,100};
+const LColor GREEN = {180,0,255};
+const LColor YELLOWGREEN = {120,255,0};
+const LColor YELLOW = {255,255,0};
+const LColor ORANGE = {255,130,0};
 
 // ########################
 // #      Text Styles     #
@@ -134,51 +135,88 @@ const C ORANGE = {255,130,0};
 
 
 
-// Global file pointer for the error log
-static FILE* G_error_file = NULL;
+
 
 
 // ########################
 // #        Logger        #
 // ########################
 
+// Global file pointer for the error log
+static FILE* G_error_file = NULL;
 
 // Initialize logger at the programs start.
 int LoggerInit() {
-    const char* folder = "Logs";
-    char filename[512]; // larger buffer for folder + file name
-    int num = 1;
+    
+    #pragma region Timestamp Setup
+    // those are just to put the time to the hard-coded logs.
+    char TimeBuffer[64];
+    time_t Time = time(NULL);
+    strftime(TimeBuffer, sizeof(TimeBuffer), "%Ih %Mm %Ss %p", localtime(&Time));
+    #pragma endregion
 
-    // Make sure folder exists
-    char mkdir_cmd[512];
-    snprintf(mkdir_cmd, sizeof(mkdir_cmd), "mkdir -p %s", folder);
+    #pragma region Log File and Output Configuration
+    char FailSafe[1124];         // Overflow protection for huge log strings
+    const char* FolderName = "Logs"; // the folder name.
+    char FileName[1024];         // The file location.
+    int Number = 1;                 // Index used for auto-incrementing log filenames
+    #pragma endregion
+
+    #pragma region Makes sure folder exists
+    char mkdir_cmd[1024];
+    snprintf(mkdir_cmd, sizeof(mkdir_cmd), "mkdir -p %s", FolderName);
     if (system(mkdir_cmd) != 0) {
-        printf("Failed to create directory\n");
-    } // creates the folder if it doesn't exist
+        printf("[\033[1mINFO\033[0m] -> Info in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", __FILE__, __LINE__, "Logger Failed to create directory!");
+    }
+    #pragma endregion
 
-    while (1) {
-        snprintf(filename, sizeof(filename), "%s/Log-%03d.txt", folder, num);
-        FILE* f = fopen(filename, "r");
+    #pragma region Creates the folder if it doesnt exist
+    while (true)
+    {
+        snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
+        if(sizeof(FileName) == 1024)
+        {
+            snprintf(FailSafe, sizeof(FailSafe), "rm %s/*", FolderName);
+            system(FailSafe);
+        }
+        FILE* f = fopen(FileName, "r");
         if (!f) break; // file doesn't exist then use it
         fclose(f);
-        num++;
+        Number++;
     }
+    #pragma endregion
 
-    G_error_file = fopen(filename, "w");
-    if (!G_error_file) {
-        printf("[\033[1;5;31mERROR\033[0m] -> \x1b[30mCannot open\x1b[30m %s\n", filename);
+    #pragma region Opens the file
+    G_error_file = fopen(FileName, "w");
+    if (!G_error_file) 
+    {
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, FileName);
         return 1;
     }
+    #pragma endregion
 
-    printf("[\033[1mINFO\033[0m] -> Info in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n",__FILE__, __LINE__, filename);
-    fprintf(G_error_file, "[INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n",__FILE__, __LINE__, filename);
+    #pragma region Init message
+    printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", TimeBuffer, Bold, "INFO", "Info", __FILE__, __LINE__, FileName);
+    fprintf(G_error_file, "[%s] [INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n",__FILE__, __LINE__, TimeBuffer, FileName);
     fflush(G_error_file);
+    #pragma endregion
+
     return 0;
 }
 
-// ------------------------
-// Close logger at program end.
+
+// Close logger end.
 int LoggerShutdown() {
+    // 
+    #pragma region Timestamp Setup
+    // those are just to put the time to the hard-coded logs.
+    char TimeBuffer[64];
+    time_t Time = time(NULL);
+    strftime(TimeBuffer, sizeof(TimeBuffer), "%Ih %Mm %Ss %p", localtime(&Time));
+    #pragma endregion
+
+    // Check if the error file is true if it is, it will continue as is and if not it will return 1
+    #pragma region Close the error file
     if (G_error_file) {
         fclose(G_error_file);
         G_error_file = NULL;
@@ -186,17 +224,27 @@ int LoggerShutdown() {
     }
     else
     {
-        printf("[\033[1;5;31mERROR\033[0m] -> Error in <./Debugger/Logger/Logger.cpp> at line <113>: <Failed to shutdown logger!>\n");
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Failed to shutdown logger!");
         return 1;
     }
+    #pragma endregion
 }
 
 
 
 int Template(const char* msg, const char* file, int line, const char* Ctype, const char* type, const char* C)
 {
+    time_t currentTime;
+    struct tm *localTime;
+    // Get the current time
+    currentTime = time(NULL);
+    // Convert to local time
+    localTime = localtime(&currentTime);
+    char buffer[64];
+    strftime(buffer, sizeof(buffer), "%Ih %Mm %Ss %p", localTime);
+
     // Console output
-    printf("[\033[%s%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n",C, Ctype, type, file, line, msg);
+    printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", buffer, C, Ctype, type, file, line, msg);
 
     // File output
     if (G_error_file) {
@@ -204,7 +252,8 @@ int Template(const char* msg, const char* file, int line, const char* Ctype, con
         fflush(G_error_file); // ensure it's written immediately
         return 0;
     }
-    printf("[\033[1;5;31mERROR\033[0m] -> Error in <./Debugger/Logger/Logger.cpp> at line <205>: <Failed to output an error to file!>\n");
+    
+    printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", buffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Failed to output an error to file!");
     return 1;
 }
 
@@ -214,7 +263,7 @@ int Template(const char* msg, const char* file, int line, const char* Ctype, con
 // Log error with the file and line location.
 int Error(const char* msg, const char* file, int line)
 {
-    return Template(msg, file, line, "ERROR", "Error", Bold ";" SlowBlink ";" "31" "m");
+    return Template(msg, file, line, "ERROR", "Error", Bold ";" SlowBlink ";" "31");
 }
 
 
@@ -222,26 +271,26 @@ int Error(const char* msg, const char* file, int line)
 // Log trace with the file and line location.
 int Trace(const char* msg, const char* file, int line)
 {
-    return Template(msg, file, line, "TRACE", "Trace", Bold ";" Foreground ";44;135;255" "m");
+    return Template(msg, file, line, "TRACE", "Trace", Bold ";" Foreground ";44;135;255");
 }
 
 // ------------------------
 // Log info with the file and line location.
 int Info(const char* msg, const char* file, int line)
 {
-    return Template(msg, file, line, "INFO", "Info", Bold "m");
+    return Template(msg, file, line, "INFO", "Info", Bold);
 }
 
 // ------------------------
 // Log warning with the file and line location.
 int Warning(const char* msg, const char* file, int line)
 {
-    return Template(msg, file, line, "WARNING", "Warning", Bold ";" SlowBlink ";" Foreground ";255;170;50" "m");
+    return Template(msg, file, line, "WARNING", "Warning", Bold ";" SlowBlink ";" Foreground ";255;170;50");
 }
 
 // ------------------------
 // Log debug with the file and line location.
 int Debug(const char* msg, const char* file, int line)
 {
-    return Template(msg, file, line, "DEBUG", "Debug", Bold ";" Foreground ";255;0;255" "m");
+    return Template(msg, file, line, "DEBUG", "Debug", Bold ";" Foreground ";255;0;255");
 }

@@ -1,9 +1,9 @@
-#ifndef AUDIO_HPP
-#define AUDIO_HPP
+#pragma once
 
 #include "../../external/miniaudio-0.11.25/miniaudio.h"
 #include "../Debugger/Debugger.hpp"
 #include <stdio.h>
+#include <vector>
 
 #define DEFAULT_MASTER_VOLUME 1.0f
 #define DEFAULT_VOLUME 1.0f
@@ -11,6 +11,25 @@
 
 extern ma_engine engine;
 extern bool init;
+extern ma_sound_group AudioGroup;
+
+struct AudioLimiter
+{
+    ma_node_base base;               // Required miniaudio base node structure
+
+    float threshold = 0.95f;        // Ceiling limit (signal magnitude shouldn't cross 0.95)
+    float gain = 1.0f;              // Active smooth volume multiplier applied to output
+
+    float attackTimeSec = 0.005f;   // Time constant to pull volume down (5 milliseconds)
+    float releaseTimeSec = 0.150f;  // Time constant to return volume back up (150 milliseconds)
+
+    float lookaheadSec = 0.005f;    // Delay time buffer (5 milliseconds)
+    std::vector<float> delayBuffer; // Interleaved memory storage to hold raw delayed samples
+    ma_uint32 delayBufferLength = 0;// Total frame capacity of the delay ring buffer
+    ma_uint32 writeIndex = 0;       // Current write pointer cursor location inside the ring buffer
+};
+
+extern AudioLimiter limiter;
 
 /**
  * Audio Object
@@ -25,42 +44,16 @@ class Audio
 protected:
     ma_sound sound;
     bool sound_loaded = false;
+    const char* OverlappingSoundfilename;
+
 public:
-    void LoadSound(const char *filename, float volume, bool looping, float pitch);
-    void PlaySound();
+    void LoadSound(const char* filename, float volume, bool looping, float pitch);
+    void NoneOverlappingSound();
+    void OverlappingSound();
     void UnloadSound();
     ~Audio();
 };
 
-
-// Initialize the Audio engine with default settings
-inline void InitializeAudio(float volume)
-{
-    if (ma_engine_init(NULL, &engine) != MA_SUCCESS)
-    {
-        error("Failed to initialize audio engine!");
-        init = false;
-        return;
-    }
-    ma_engine_set_volume(&engine, volume);
-    init = true;
-    info("Audio engine initialized!");
-}
-
-
-// Clean up and shutdown engine.
-inline void AudioShutdown()
-{
-    if (init)
-    {
-        ma_engine_uninit(&engine);
-        init = false;
-        info("Audio engine shutdown!");
-    }
-    else
-    {
-       error("Failed to shutdown audio engine the engine is not initialized or is already shutdown!");
-    }
-}
-
-#endif
+void InitializeAudio(float volume);
+void AudioShutdown();
+void InitAudioLimiterBuffer(AudioLimiter* limiter, ma_uint32 sampleRate, ma_uint32 channels);

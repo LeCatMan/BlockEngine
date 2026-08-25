@@ -1,5 +1,4 @@
-#ifndef INPUTS_HPP
-#define INPUTS_HPP
+#pragma once
 
 #include <stdbool.h>
 #include "KeyBoard/KeyBoardUtilities.hpp"
@@ -359,5 +358,3 @@
 #define BLOCK_GAMEPAD_AXIS_RIGHT_TRIGGER 5
 #define BLOCK_GAMEPAD_AXIS_LAST          BLOCK_GAMEPAD_AXIS_RIGHT_TRIGGER
 /*! @} */
-
-#endif
