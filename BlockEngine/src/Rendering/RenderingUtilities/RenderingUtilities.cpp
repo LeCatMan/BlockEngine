@@ -54,7 +54,7 @@ void CloseWindow()
 }
 
 // Clean up and shutdown engine.
-void RenderingShutDown()
+void RenderingShutdown()
 {
     glfwTerminate();
 }
@@ -75,6 +75,7 @@ bool WindowShouldClose()
 // process rendering events.
 void UpdateWindow()
 {
+    UpdateAudio();
     UpdateInput();
     if (KeyEvent(ExitKey, BLOCK_PRESS))
     {

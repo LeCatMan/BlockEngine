@@ -15,13 +15,10 @@ int main() {
         info("Entering Game Loop");
         while (!WindowShouldClose())
         {
+
             UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                AudioObject[0].OverlappingSound();
-                AudioObject[0].OverlappingSound();
-                AudioObject[0].OverlappingSound();
-                AudioObject[0].OverlappingSound();
                 AudioObject[0].OverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
@@ -32,6 +29,10 @@ int main() {
             {
                 AudioObject[1].NoneOverlappingSound();
             }
+            if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
+            {
+                AudioObject[0].OverlappingSound();
+            }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();
             MyTriangle.DrawTriangle();
@@ -40,6 +41,6 @@ int main() {
         info("Exited Game Loop");
     }
 
-    ShutdownBlockEngine();
+    BlockEngineShutdown();
     return 0;
 }

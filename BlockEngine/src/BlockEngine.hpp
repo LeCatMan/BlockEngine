@@ -38,11 +38,11 @@ inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char 
  * Example:
  *     ShutdownBlockEngine();
  */
-inline void ShutdownBlockEngine()
+inline void BlockEngineShutdown()
 {
     info("Closing Program");
 
-    RenderingShutDown();
+    RenderingShutdown();
     AudioShutdown();
 
     info("Closed Program");

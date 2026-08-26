@@ -1,19 +1,20 @@
 CXX = g++
-
 CXXFLAGS = -Isrc -Iexternal/glad/include
 LDFLAGS =
 
-ASAN = 1
+# ASAN is now 0 (OFF) by default
+ASAN ?= 0
 
 ifeq ($(ASAN),1)
-	CXXFLAGS += -g -fsanitize=address
-	LDFLAGS += -fsanitize=address
+    CXXFLAGS += -g -fsanitize=address
+    LDFLAGS += -fsanitize=address
+    TARGET = BlockEngineDEBUG
+else
+    TARGET = BlockEngine
 endif
 
 SRC = $(shell find src -name "*.cpp")
 OBJ = $(SRC:.cpp=.o)
-
-TARGET = BlockEngine
 
 all: $(TARGET)
 
@@ -29,9 +30,11 @@ external/glad/src/glad.o: external/glad/src/glad.c
 run: $(TARGET)
 	./$(TARGET)
 
-off:
-	$(MAKE) clean
-	$(MAKE) ASAN=0
+# Type 'make san' to wipe, build with AddressSanitizer, and run
+san:
+	$(MAKE) -f BlockEngine.mk clean
+	$(MAKE) -f BlockEngine.mk ASAN=1
+	./BlockEngineDEBUG
 
 clean:
-	rm -f $(TARGET) $(OBJ) external/glad/src/glad.o
+	rm -f BlockEngine BlockEngineDEBUG $(OBJ) external/glad/src/glad.o

@@ -197,7 +197,7 @@ int LoggerInit() {
 
     #pragma region Init message
     printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", TimeBuffer, Bold, "INFO", "Info", __FILE__, __LINE__, FileName);
-    fprintf(G_error_file, "[%s] [INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n",__FILE__, __LINE__, TimeBuffer, FileName);
+    fprintf(G_error_file, "[%s] [INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n", TimeBuffer, __FILE__, __LINE__, FileName);
     fflush(G_error_file);
     #pragma endregion
 

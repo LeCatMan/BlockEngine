@@ -5,9 +5,11 @@
 #include <stdbool.h>
 
 #include "../../Debugger/Debugger.hpp"
+#include "../../Inputs/Inputs.hpp"
+#include "../../Audio/Audio.hpp"
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
-#include "../../Inputs/Inputs.hpp"
+
 
 extern GLFWwindow* Bwindow;
 extern const char *TestFragmentShaderSource;
@@ -232,4 +234,4 @@ void UpdateWindow();
 bool WindowShouldClose();
 void CloseWindow();
 void BackGroundColor(Color color, int opacity);
-void RenderingShutDown();
+void RenderingShutdown();
