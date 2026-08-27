@@ -150,4 +150,68 @@ void AudioShutdown()
     }
 }
 
-// (data_callback and ResourceManager code remains unchanged down here...)
+// Audio callback & ResourceManager remain the same
+void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+{
+    ma_data_source* pDataSource = (ma_data_source*)pDevice->pUserData;
+    ma_data_source_read_pcm_frames(pDataSource, pOutput, frameCount, NULL);
+    (void)pInput;
+}
+
+int ResourceManager::InitializeResourceManger(const char* sound)
+{
+    ma_device_config deviceConfig = ma_device_config_init(ma_device_type_playback);
+    deviceConfig.dataCallback = data_callback;
+
+    if (ma_device_init(NULL, &deviceConfig, &device) != MA_SUCCESS)
+    {
+        error("Failed to initialize audio device.");
+        return 1;
+    }
+
+    ma_resource_manager_config rmConfig = ma_resource_manager_config_init();
+    rmConfig.decodedFormat     = device.playback.format;
+    rmConfig.decodedChannels   = device.playback.channels;
+    rmConfig.decodedSampleRate = device.sampleRate;
+
+    if (ma_resource_manager_init(&rmConfig, &resourceManager) != MA_SUCCESS)
+    {
+        error("Failed to initialize resource manager.");
+        ma_device_uninit(&device);
+        return 1;
+    }
+
+    if (ma_resource_manager_data_source_init(&resourceManager, sound, MA_RESOURCE_MANAGER_DATA_SOURCE_FLAG_DECODE | MA_RESOURCE_MANAGER_DATA_SOURCE_FLAG_STREAM, NULL, &dataSource) != MA_SUCCESS)
+    {
+        error("Failed to initialize resource manager data source.");
+        ma_resource_manager_uninit(&resourceManager);
+        ma_device_uninit(&device);
+        return 1;
+    }
+
+    ma_data_source_set_looping(&dataSource, MA_TRUE);
+    device.pUserData = &dataSource;
+
+    if (ma_device_start(&device) != MA_SUCCESS)
+    {
+        error("Failed to start audio device!");
+        return 1;
+    }
+
+    is_initialized = true;
+    return 0;
+}
+
+int ResourceManager::ResourceManagerShutdown()
+{
+    if (!is_initialized) return 0;
+
+    ma_device_uninit(&device);
+    ma_resource_manager_data_source_uninit(&dataSource);
+    ma_resource_manager_uninit(&resourceManager);
+    
+    is_initialized = false;
+    return 0;
+}
+
+
