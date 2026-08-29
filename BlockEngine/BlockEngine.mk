@@ -21,6 +21,7 @@ all: $(TARGET)
 $(TARGET): $(OBJ) external/glad/src/glad.o
 	$(CXX) $^ -o $@ $(LDFLAGS) -lGL -lglfw -ldl -lm -lcrypto
 
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 

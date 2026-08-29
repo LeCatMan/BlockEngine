@@ -16,7 +16,7 @@ private:
     ma_device device;
     ma_resource_manager resourceManager;
     ma_resource_manager_data_source dataSource;
-    bool is_initialized = false;
+    bool IsInitialized = false;
 
 public:
     int InitializeResourceManger(const char* sound);
@@ -30,7 +30,7 @@ private:
     bool sound_loaded = false;
 
 public:
-    void LoadSound(const char* filename, float volume = 1.0f, bool looping = false, float pitch = 1.0f);
+    void LoadSound(const char* Path, float volume = 1.0f, bool looping = false, float pitch = 1.0f);
     void NoneOverlappingSound();
     void OverlappingSound();
     void UnloadSound();

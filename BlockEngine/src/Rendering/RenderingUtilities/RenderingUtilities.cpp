@@ -7,6 +7,7 @@
 // ########################
 
 GLFWwindow *Bwindow;
+GLFWmonitor *Monitor;
 
 void framebuffer_size_callback(GLFWwindow *Bwindow, int WindowWidth, int WindowHeight)
 {
@@ -14,12 +15,12 @@ void framebuffer_size_callback(GLFWwindow *Bwindow, int WindowWidth, int WindowH
 }
 
 // Initialize the rendering engine with default settings.
-int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle)
+int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle, bool VSync)
 {
     if (!glfwInit())
     {
         error("Failed to initialize GLFW");
-        return 1;
+        return BLOCK_ERR_INIT_FAILED;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -30,21 +31,40 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle)
     {
         error("Failed to create GLFW window");
         glfwTerminate();
-        return 1;
+        return BLOCK_ERR_INIT_FAILED;
     }
     glfwMakeContextCurrent(Bwindow);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         error("Failed to initialize GLAD");
-        return 1;
+        return BLOCK_ERR_INIT_FAILED;
     }
 
     glfwSetFramebufferSizeCallback(Bwindow, framebuffer_size_callback);
+    
+    Monitor = glfwGetPrimaryMonitor();
+    if (Monitor == NULL)
+    {
+        error("Couldn't get the monitor");
+        if (VSync)
+        {
+            glfwSwapInterval(1);
+        }
+    }
+    else
+    {
+        const GLFWvidmode *Mode = glfwGetVideoMode(Monitor);
 
-    glfwSwapInterval(1);
+        info("Monitor: %d Hz", Mode->refreshRate);
 
-    return 0;
+        if (VSync)
+        {
+            glfwSwapInterval(1);
+        }
+    }
+    info("Rendering engine initialized!");
+    return BLOCK_SUCCESS;
 }
 
 // Closes the window ? what did you expect ;) .
@@ -56,6 +76,7 @@ void CloseWindow()
 // Clean up and shutdown engine.
 void RenderingShutdown()
 {
+    info("Rendering engine shutdown!");
     glfwTerminate();
 }
 
@@ -392,15 +413,13 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 
     int success;
     char infoLog[512];
-    char buffer[548];
 
     glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
 
     if (!success)
     {
         glGetShaderInfoLog(VertexShader, 512, NULL, infoLog);
-        snprintf(buffer, sizeof(buffer), "Vertex shader compilation failed: %s", infoLog);
-        error(buffer);
+        error("Vertex shader compilation failed: %s", infoLog);
         return;
     }
 
@@ -421,8 +440,7 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
     if (!success)
     {
         glGetShaderInfoLog(FragmentShader, 512, NULL, infoLog);
-        snprintf(buffer, sizeof(buffer), "Fragment shader compilation failed: %s", infoLog);
-        error(buffer);
+        error("Fragment shader compilation failed: %s", infoLog);
         return;
     }
 }

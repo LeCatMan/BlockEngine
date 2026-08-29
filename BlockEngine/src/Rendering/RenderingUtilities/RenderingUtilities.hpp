@@ -153,7 +153,7 @@ public:
         true,
         false)
     {
-        info("Creating Triangle Resources");
+        trace("Creating Triangle Resources");
     }
 
     ~Triangle();
@@ -191,6 +191,7 @@ class Square : public Shape2D
 public:
     Square(Color color) : Shape2D(color, "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
     {
+        trace("Creating Square Resources");
     }
 
     ~Square();
@@ -229,7 +230,7 @@ public:
 };
 
 
-int InitializeWindow(int WindowWidth,int WindowHeight,const char *WindowTitle);
+int InitializeWindow(int WindowWidth,int WindowHeight,const char *WindowTitle, bool VSync);
 void UpdateWindow();
 bool WindowShouldClose();
 void CloseWindow();

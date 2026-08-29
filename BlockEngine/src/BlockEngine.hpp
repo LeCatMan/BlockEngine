@@ -23,11 +23,12 @@
  * Example:
  *     InitializeBlockEngine(800, 600, "Test", BLOCK_KEY_ESCAPE);
  */
-inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *WindowTitle, int ExitKey, float volume)
+inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *WindowTitle, int ExitKey, float volume , bool VSync)
 {
     LoggerInit();
+    GetCurrentRunningPath();
     info("Launching BlockEngine");
-    InitializeWindow(WindowWidth,WindowHeight, WindowTitle);
+    InitializeWindow(WindowWidth,WindowHeight, WindowTitle, VSync);
     InitializeInput();
     SetExitKey(ExitKey);
     InitializeAudio(volume);

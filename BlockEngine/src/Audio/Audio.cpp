@@ -43,9 +43,9 @@ void UpdateAudio()
     }
 }
 
-void Audio::LoadSound(const char *filename, float volume, bool looping, float pitch)
+void Audio::LoadSound(const char *Path, float volume, bool looping, float pitch)
 {
-    ma_result result = ma_sound_init_from_file(&engine, filename, MA_SOUND_FLAG_DECODE, NULL, NULL, &sound);
+    ma_result result = ma_sound_init_from_file(&engine, Path, MA_SOUND_FLAG_DECODE, NULL, NULL, &sound);
 
     if (result != MA_SUCCESS)
     {
@@ -59,7 +59,9 @@ void Audio::LoadSound(const char *filename, float volume, bool looping, float pi
     ma_sound_set_pitch(&sound, pitch);
     sound_loaded = MA_TRUE;
 
-    trace("Loaded Sound!");
+    const char *FileName = strrchr(Path, '/') + 1;
+
+    trace("Loaded Sound : %s!", FileName);
 }
 
 void Audio::NoneOverlappingSound()
@@ -198,19 +200,19 @@ int ResourceManager::InitializeResourceManger(const char* sound)
         return 1;
     }
 
-    is_initialized = true;
+    IsInitialized = true;
     return 0;
 }
 
 int ResourceManager::ResourceManagerShutdown()
 {
-    if (!is_initialized) return 0;
+    if (!IsInitialized) return 0;
 
     ma_device_uninit(&device);
     ma_resource_manager_data_source_uninit(&dataSource);
     ma_resource_manager_uninit(&resourceManager);
     
-    is_initialized = false;
+    IsInitialized = false;
     return 0;
 }
 

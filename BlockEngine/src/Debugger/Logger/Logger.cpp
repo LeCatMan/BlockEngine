@@ -165,7 +165,8 @@ int LoggerInit() {
     #pragma region Makes sure folder exists
     char mkdir_cmd[1024];
     snprintf(mkdir_cmd, sizeof(mkdir_cmd), "mkdir -p %s", FolderName);
-    if (system(mkdir_cmd) != 0) {
+    if (system(mkdir_cmd) == BLOCK_SUCCESS)
+    {
         printf("[\033[1mINFO\033[0m] -> Info in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", __FILE__, __LINE__, "Logger Failed to create directory!");
     }
     #pragma endregion
@@ -173,12 +174,15 @@ int LoggerInit() {
     #pragma region Creates the folder if it doesnt exist
     while (true)
     {
-        snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
-        if(sizeof(FileName) == 1024)
+        int FilePath = snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
+
+        if(FilePath < 0 || FilePath >= sizeof(FileName))
         {
             snprintf(FailSafe, sizeof(FailSafe), "rm %s/*", FolderName);
             system(FailSafe);
         }
+
+        snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
         FILE* f = fopen(FileName, "r");
         if (!f) break; // file doesn't exist then use it
         fclose(f);
@@ -191,7 +195,7 @@ int LoggerInit() {
     if (!G_error_file) 
     {
         printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, FileName);
-        return 1;
+        return BLOCK_ERR_FILE_IO;
     }
     #pragma endregion
 
@@ -199,9 +203,8 @@ int LoggerInit() {
     printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", TimeBuffer, Bold, "INFO", "Info", __FILE__, __LINE__, FileName);
     fprintf(G_error_file, "[%s] [INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n", TimeBuffer, __FILE__, __LINE__, FileName);
     fflush(G_error_file);
+    return BLOCK_SUCCESS;
     #pragma endregion
-
-    return 0;
 }
 
 
@@ -218,6 +221,7 @@ int LoggerShutdown() {
     // Check if the error file is true if it is, it will continue as is and if not it will return 1
     #pragma region Close the error file
     if (G_error_file) {
+        info("Logger shutdown!");
         fclose(G_error_file);
         G_error_file = NULL;
         return 0;

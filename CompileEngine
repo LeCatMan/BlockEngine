@@ -1,5 +1,13 @@
 #!/bin/bash
 
 cd BlockEngine
-make -f BlockEngine.mk "$@"
+
+if [ $# -eq 0 ]; then
+    make -f BlockEngine.mk run
+elif [ "$1" = "run" ]; then
+    ./BlockEngine
+else
+    make -f BlockEngine.mk "$@"
+fi
+
 cd ..

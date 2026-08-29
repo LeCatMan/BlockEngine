@@ -12,6 +12,8 @@
     #include <unistd.h>
 #endif
 
+extern char RunningPath[1024];
+
 typedef enum BlockResult {
     BLOCK_SUCCESS = 0,
     BLOCK_FAILURE = -1,          // General or unspecified failure
@@ -25,5 +27,5 @@ typedef enum BlockResult {
 // Fast string conversion for the logging system
 const char* BlockGetErrorString(BlockResult Result);
 
-char *CurrentRunningPath();
+void GetCurrentRunningPath();
 char *GetFileText(const char *FileName);

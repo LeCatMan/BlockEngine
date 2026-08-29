@@ -4,8 +4,6 @@
 
 > **Simplicity when you want it. Control when you need it.**
 
-🚧 **Block Engine is currently in Alpha 0.6 and under active development.**
-
 ## 🎮 What is Block Engine?
 
 Block Engine is a custom-made game engine written in **C++ and C**, currently targeting **Linux**.
@@ -35,6 +33,23 @@ The project is focused on building the core systems needed for **2D and 3D game 
 
 ---
 
+## 🔌 API
+
+Block Engine exposes an **API** that allows developers to interact with and extend the engine from their own code.
+
+You can use the API to:
+
+* Create and control engine systems
+* Access existing functionality
+* Add your own features
+* Modify how systems behave
+* Build custom gameplay systems
+* Integrate your own code directly into the engine
+
+The engine is just an interface for the api
+
+---
+
 ## 💻 Example
 
 A basic Block Engine program currently looks like this:
@@ -42,37 +57,39 @@ A basic Block Engine program currently looks like this:
 ```cpp
 #include "BlockEngine.hpp"// we include this because we need it :D
 
-// Hover over functions/classes to see they works.
-
 int main() {
     // here we initialize the (Logger, Window, Input, Audio) and set the exit key.
-    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, DEFAULT_MASTER_VOLUME);
+    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, 1.0f, true);
 
+    // You will have to put it in in {} because the AudioObject and (MyTriangle,MySquare) will have to destroy there resources before shutdown
     {
-        // Audio objects can be used for any object that needs audio.
+        // This is an audio object it make
         Audio AudioObject[2];
-
         AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
         AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
-        
         Triangle MyTriangle(Color(180,180,180));
         Square MySquare(Color(155,155,180));
 
         info("Entering Game Loop");
         while (!WindowShouldClose())
         {
+
             UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                AudioObject[0].PlaySound();
+                AudioObject[0].OverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
             {
-                AudioObject[1].PlaySound();
+                AudioObject[1].NoneOverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
-                AudioObject[1].PlaySound();
+                AudioObject[1].NoneOverlappingSound();
+            }
+            if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
+            {
+                AudioObject[0].OverlappingSound();
             }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();
@@ -82,7 +99,7 @@ int main() {
         info("Exited Game Loop");
     }
 
-    ShutdownBlockEngine();
+    BlockEngineShutdown();
     return 0;
 }
 ```
@@ -99,7 +116,7 @@ But if you want to understand, modify, or work directly with the lower-level sys
 
 ## 🚧 Development Status
 
-Block Engine is currently in **Alpha 0.6** and is actively being developed.
+Block Engine is currently in **Alpha 0.66** and is actively being developed.
 
 It is an early-stage project, so APIs and features may change, break, or be replaced as development continues.
 
@@ -179,6 +196,16 @@ Contributions to Block Engine are welcome!
 * 📢 Share Block Engine with others
 
 Before making major changes, please open an issue to discuss them first. 🚀
+
+---
+
+## 💬 Discord
+
+Have questions, want to share something you've made, or just want to hang out?
+
+Everyone is welcome. We'd love to have you! 👋
+
+**[Join the Block Engine Discord](https://discord.gg/7Y6rtN9wu7)**
 
 ---
 
