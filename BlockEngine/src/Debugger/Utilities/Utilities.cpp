@@ -1,7 +1,5 @@
 #include "Utilities.hpp"
 
-
-
 char CurrentRunningPath[1024];
 
 // It get the current running path and adds it as a global.
@@ -26,40 +24,45 @@ void GetCurrentRunningPath()
         info("The current running path is: %s", CurrentRunningPath);
         return;
     }
+    
+
 }
 
+// Get text that is in a file.
 char *GetFileText(const char *FileName)
 {
+
     #pragma region Open the file
-    FILE *file = fopen(FileName, "rb");
-    if (file == NULL)
+    FILE *File = fopen(FileName, "rb");
+    if (File == NULL)
         return NULL;
     #pragma endregion
 
     #pragma region Allocate space for the text
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file);
+    fseek(File, 0, SEEK_END);
+    long Sizw = ftell(File);
+    rewind(File);
 
-    char *text = (char *)malloc(size + 1);
+    char *Text = (char *)malloc(Sizw + 1);
 
-    if (text == NULL)
+    if (Text == NULL)
     {
-        fclose(file);
+        fclose(File);
         return NULL;
     }
     #pragma endregion
 
     #pragma region Get the text
-    fread(text, 1, size, file);
-    text[size] = '\0';
-    fclose(file);
+    fread(Text, 1, Sizw, File);
+    Text[Sizw] = '\0';
+    fclose(File);
     #pragma endregion
     
-    return text;
+    return Text;
+
 }
 
-// Fast string conversion for the logging system
+// Fast string conversion for the logging system.
 const char* BlockGetErrorString(BlockResult Result) {
     switch (Result) {
         case BLOCK_SUCCESS:           return "SUCCESS";

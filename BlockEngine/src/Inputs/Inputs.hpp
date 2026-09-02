@@ -4,57 +4,12 @@
 #include "KeyBoard/KeyBoardUtilities.hpp"
 
 
-/*! @brief One.
- *
- *  This is only semantic sugar for the number 1.  You can instead use `1` or
- *  `true` or `_True` or `GL_TRUE` or `VK_TRUE` or anything else that is equal
- *  to one.
- *
- *  @ingroup init
- */
-#define BLOCK_TRUE                   1
-/*! @brief Zero.
- *
- *  This is only semantic sugar for the number 0.  You can instead use `0` or
- *  `false` or `_False` or `GL_FALSE` or `VK_FALSE` or anything else that is
- *  equal to zero.
- *
- *  @ingroup init
- */
-#define BLOCK_FALSE                  0
-
-/*! @name Key and button actions
- *  @{ */
-/*! @brief The key or mouse button was released.
- *
- *  The key or mouse button was released.
- *
- *  @ingroup input
- */
 #define BLOCK_RELEASE                0
-/*! @brief The key or mouse button was pressed.
- *
- *  The key or mouse button was pressed.
- *
- *  @ingroup input
- */
-#define BLOCK_PRESS                  1
-/*! @brief The key was held down until it repeated.
- *
- *  The key was held down until it repeated.
- *
- *  @ingroup input
- */
-#define BLOCK_REPEAT                 2
-/*! @} */
 
-/*! @defgroup hat_state Joystick hat states
- *  @brief Joystick hat states.
- *
- *  See [joystick hat input](@ref joystick_hat) for how these are used.
- *
- *  @ingroup input
- *  @{ */
+#define BLOCK_PRESS                  1
+
+#define BLOCK_REPEAT                 2
+
 #define BLOCK_HAT_CENTERED           0
 #define BLOCK_HAT_UP                 1
 #define BLOCK_HAT_RIGHT              2
@@ -65,37 +20,9 @@
 #define BLOCK_HAT_LEFT_UP            (BLOCK_HAT_LEFT  | BLOCK_HAT_UP)
 #define BLOCK_HAT_LEFT_DOWN          (BLOCK_HAT_LEFT  | BLOCK_HAT_DOWN)
 
-/*! @ingroup input
- */
+
 #define BLOCK_KEY_UNKNOWN            -1
 
-/*! @} */
-
-/*! @defgroup keys Keyboard key tokens
- *  @brief Keyboard key tokens.
- *
- *  See [key input](@ref input_key) for how these are used.
- *
- *  These key codes are inspired by the _USB HID Usage Tables v1.12_ (p. 53-60),
- *  but re-arranged to map to 7-bit ASCII for printable keys (function keys are
- *  put in the 256+ range).
- *
- *  The naming of the key codes follow these rules:
- *   - The US keyboard layout is used
- *   - Names of printable alphanumeric characters are used (e.g. "A", "R",
- *     "3", etc.)
- *   - For non-alphanumeric characters, Unicode:ish names are used (e.g.
- *     "COMMA", "LEFT_SQUARE_BRACKET", etc.). Note that some names do not
- *     correspond to the Unicode standard (usually for brevity)
- *   - Keys that lack a clear US mapping are named "WORLD_x"
- *   - For non-printable keys, custom names are used (e.g. "F4",
- *     "BACKSPACE", etc.)
- *
- *  @ingroup input
- *  @{
- */
-
-/* Printable keys */
 #define BLOCK_KEY_SPACE              32
 #define BLOCK_KEY_APOSTROPHE         39  /* ' */
 #define BLOCK_KEY_COMMA              44  /* , */

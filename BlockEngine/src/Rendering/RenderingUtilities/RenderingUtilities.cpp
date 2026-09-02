@@ -1,5 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../../external/stb-master/stb_image.h"
+#include "../../Debugger/Utilities/Utilities.hpp"
 #include "RenderingUtilities.hpp"
 
 // ########################
@@ -56,14 +57,14 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
     {
         const GLFWvidmode *Mode = glfwGetVideoMode(Monitor);
 
-        info("Monitor: %d Hz", Mode->refreshRate);
+        rendering("Monitor: %d Hz", Mode->refreshRate);
 
         if (VSync)
         {
             glfwSwapInterval(1);
         }
     }
-    info("Rendering engine initialized!");
+    rendering("Rendering engine initialized!");
     return BLOCK_SUCCESS;
 }
 
@@ -76,8 +77,10 @@ void CloseWindow()
 // Clean up and shutdown engine.
 void RenderingShutdown()
 {
-    info("Rendering engine shutdown!");
+    #pragma region just shutting down
+    rendering("Rendering engine shutdown!");
     glfwTerminate();
+    #pragma endregion
 }
 
 // Changes the background color.
@@ -409,7 +412,9 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 
     VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
     glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
-    glCompileShader(VertexShader);                              // compiles the shader ?
+    glCompileShader(VertexShader);                              // compiles the shader ? ;)
+    free(vertexshadersource);
+    vertexshadersource = nullptr;
 
     int success;
     char infoLog[512];
@@ -434,6 +439,8 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
     FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(FragmentShader, 1, &fragmentshadersource, NULL);
     glCompileShader(FragmentShader);
+    free(fragmentshadersource);
+    fragmentshadersource = nullptr;
 
     glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
 
@@ -446,10 +453,7 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 }
 
 Shader2D::~Shader2D()
-{
-    free(vertexshadersource);
-    free(fragmentshadersource);
-};
+{};
 
 
 // ========================
@@ -620,7 +624,7 @@ Shape2D::~Shape2D()
     DestroyVAO(Shape2DVAO);
     DestroyVBO(Shape2DVBO);
     DestroyEBO(Shape2DEBO);
-    info("Destroyed the Shapes resources");
+    rendering("Destroyed the Shapes resources");
 }
 
 

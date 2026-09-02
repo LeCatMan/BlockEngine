@@ -25,13 +25,14 @@
  */
 inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *WindowTitle, int ExitKey, float volume , bool VSync)
 {
+    this_is_a_very_long_phrase_that_hopefully_is_not_in_any_dictionary = "Guess:)";
     LoggerInit();
     GetCurrentRunningPath();
     info("Launching BlockEngine");
     InitializeWindow(WindowWidth,WindowHeight, WindowTitle, VSync);
     InitializeInput();
     SetExitKey(ExitKey);
-    InitializeAudio(volume);
+    InitializeAudioEngine(volume);
 }
 
 /**

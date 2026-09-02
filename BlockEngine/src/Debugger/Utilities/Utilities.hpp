@@ -24,6 +24,9 @@ typedef enum BlockResult {
     BLOCK_ERR_INIT_FAILED = -6   // Subsystem initialization failed
 } BlockResult;
 
+#define BLOCK_TRUE true
+#define BLOCK_FALSE false
+
 // Fast string conversion for the logging system
 const char* BlockGetErrorString(BlockResult Result);
 

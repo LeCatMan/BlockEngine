@@ -35,18 +35,11 @@ The project is focused on building the core systems needed for **2D and 3D game 
 
 ## 🔌 API
 
-Block Engine exposes an **API** that allows developers to interact with and extend the engine from their own code.
+Block Engine is built API-first: the core runtime is simply a thin wrapper around a modular C and C++ API.
 
-You can use the API to:
-
-* Create and control engine systems
-* Access existing functionality
-* Add your own features
-* Modify how systems behave
-* Build custom gameplay systems
-* Integrate your own code directly into the engine
-
-The engine is just an interface for the api
+* **System Control:** Initialize and drive windowing, rendering, input, and audio directly from code.
+* **Extensibility:** Tweak system behaviors, inject custom C/C++ modules, or build whole gameplay frameworks on top.
+* **Direct Access:** Use high-level engine abstractions when you want speed, or reach into lower-level internals when you need fine-grained control.
 
 ---
 

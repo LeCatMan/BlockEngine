@@ -76,14 +76,14 @@ class Shader2D
 private:
     char *vertexshadersource;
     char *fragmentshadersource;
-
-public:
     unsigned int VertexShader;
     unsigned int FragmentShader;
+public:
 
     Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath);
 
     ~Shader2D();
+    friend Shape2D;
 };
 
 /**
@@ -103,7 +103,6 @@ protected:
     unsigned int Shape2DEBO;
     unsigned int Shape2DShader;
     friend class Texture;
-
 public:
 
     Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture);
@@ -153,7 +152,7 @@ public:
         true,
         false)
     {
-        trace("Creating Triangle Resources");
+        rendering("Creating Triangle Resources");
     }
 
     ~Triangle();
@@ -191,7 +190,7 @@ class Square : public Shape2D
 public:
     Square(Color color) : Shape2D(color, "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
     {
-        trace("Creating Square Resources");
+        rendering("Creating Square Resources");
     }
 
     ~Square();

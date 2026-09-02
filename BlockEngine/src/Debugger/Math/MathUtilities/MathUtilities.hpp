@@ -1,5 +1,6 @@
 #pragma once
 #include <stdarg.h>
+#include "../../Logger/Logger.hpp"
 
 
 // ########################
@@ -153,8 +154,9 @@ static inline FloatVector4 HalfFloatVector4(FloatVector4 vector)
     };
 }
 
+void dont_find_out_what_i_do();
 
-// ########################
+// ########################                                                                                                                                   
 // #    NUMBER HELPERS    #
 // ########################
 
@@ -170,7 +172,7 @@ static inline float HalfFloat(float number)
     return number / 2.0f;
 }
 
-
+                                                                                                                                                                                                                                                                                                                                extern const char* this_is_a_very_long_phrase_that_hopefully_is_not_in_any_dictionary;
 // ########################
 // #    OTHER HELPERS     #
 // ########################

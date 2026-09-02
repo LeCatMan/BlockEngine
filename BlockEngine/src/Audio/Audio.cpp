@@ -1,72 +1,125 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include "../../external/miniaudio-0.11.25/miniaudio.h"
 #include "Audio.hpp"
-#include <vector>
 
-ma_engine engine;
-bool init = false;
+ma_engine Engine;
+bool Initialized = BLOCK_FALSE;
 
 // File-scoped tracker: completely hidden from the header and individual Audio objects
-static std::vector<ma_sound*> s_ActiveOverlappingSounds;
+static std::vector<ma_sound*> ActiveOverlappingSounds;
 
-void InitializeAudio(float volume)
+
+// Initialize the audio engine.
+int InitializeAudioEngine(float volume)
 {
-    if (ma_engine_init(NULL, &engine) != MA_SUCCESS)
+
+    #pragma region Initialize audio Engine
+    if (ma_engine_init(NULL, &Engine) != MA_SUCCESS)
     {
         error("Failed to initialize audio engine!");
-        init = false;
-        return;
+        Initialized = BLOCK_FALSE;
+        return BLOCK_ERR_INIT_FAILED;
     }
+    #pragma endregion
 
-    ma_engine_set_volume(&engine, volume);
-    init = true;
-    info("Audio engine initialized!");
+    #pragma region Set audio engine variables
+    ma_engine_set_volume(&Engine, volume);
+    Initialized = BLOCK_TRUE;
+    audio("Audio engine initialized!");
+    return BLOCK_SUCCESS;
+    #pragma endregion
+
 }
 
-// Global system update function called once per frame
+
+// Global system update function called once per frame.
 void UpdateAudio()
 {
-    for (auto it = s_ActiveOverlappingSounds.begin(); it != s_ActiveOverlappingSounds.end(); )
+
+    // get through every cloned sound if it's there then see if it's playing if it's not playing delete it from memory.
+    for (auto IndexSound = ActiveOverlappingSounds.begin(); IndexSound != ActiveOverlappingSounds.end(); )
     {
-        ma_sound* pSound = *it;
-        if (pSound)
+        ma_sound* Sound = *IndexSound;
+        if (Sound)
         {
-            if (!ma_sound_is_playing(pSound))
+            if (!ma_sound_is_playing(Sound))
             {
-                ma_sound_uninit(pSound);
-                delete pSound;
-                it = s_ActiveOverlappingSounds.erase(it);
+                ma_sound_uninit(Sound);
+                delete Sound;
+                IndexSound = ActiveOverlappingSounds.erase(IndexSound);
                 continue;
             }
         }
-        ++it;
+        ++IndexSound;
     }
+
 }
 
-void Audio::LoadSound(const char *Path, float volume, bool looping, float pitch)
-{
-    ma_result result = ma_sound_init_from_file(&engine, Path, MA_SOUND_FLAG_DECODE, NULL, NULL, &sound);
 
-    if (result != MA_SUCCESS)
+// Shutdown audio engine.
+void AudioShutdown()
+{
+
+    if (Initialized)
     {
-        error("Failed to load sound!");
-        sound_loaded = MA_FALSE;
-        return;
+        // Clean up any remaining overlapping sounds safely
+        for (ma_sound* pSound : ActiveOverlappingSounds)
+        {
+            if (pSound)
+            {
+                ma_sound_stop(pSound);
+                ma_sound_uninit(pSound);
+                delete pSound;
+            }
+        }
+        ActiveOverlappingSounds.clear();
+
+        Initialized = BLOCK_FALSE;
+        ma_engine_uninit(&Engine);
+        audio("Audio engine shutdown!");
+    }
+    else
+    {
+        error("Failed to shutdown audio engine the engine is not initialized or is already shutdown!");
     }
 
-    ma_sound_set_volume(&sound, volume);
-    ma_sound_set_looping(&sound, looping);
-    ma_sound_set_pitch(&sound, pitch);
-    sound_loaded = MA_TRUE;
+}
+
+
+// Load the sound.
+void Audio::LoadSound(const char *Path, BlockSoundFlags Flag, float Volume, bool Looping, float Pitch)
+{
+
+    #pragma region Load sound
+
+    if (ma_sound_init_from_file(&Engine, Path, Flag, NULL, NULL, &sound) != MA_SUCCESS)
+    {
+        error("Failed to load sound!");
+        SoundLoaded = BLOCK_FALSE;
+        return;
+    }
+    #pragma endregion
+    
+    #pragma region Set sound properties
+    ma_sound_set_volume(&sound, Volume);
+    ma_sound_set_looping(&sound, Looping);
+    ma_sound_set_pitch(&sound, Pitch);
+    SoundLoaded = BLOCK_TRUE;
 
     const char *FileName = strrchr(Path, '/') + 1;
 
-    trace("Loaded Sound : %s!", FileName);
+    audio("Loaded Sound : %s!", FileName);
+    #pragma endregion
+
 }
+
+
+
+
 
 void Audio::NoneOverlappingSound()
 {
-    if (!sound_loaded)
+    if (!SoundLoaded)
     {
         warning("Sound is unloaded cannot play sound.");
         return;
@@ -76,19 +129,73 @@ void Audio::NoneOverlappingSound()
     ma_sound_start(&sound);
 }
 
+
+/**
+ * Adds a fade effect to the sound.
+ *
+ * @param VolumeBegin Volume at the beginning of the fade.
+ * @param VolumeEnd Volume at the end of the fade.
+ * @param FadeLengthInMilliseconds Duration of the fade in milliseconds.
+ * @param StartTimeInMilliseconds Time in milliseconds when the fade starts.
+ */
+void Audio::Fade(float VolumeBegin, float VolumeEnd, ma_uint64 FadeLengthInMilliseconds, ma_uint64 StartTimeInMilliseconds)
+{
+    ma_sound_set_fade_start_in_milliseconds(&sound, VolumeBegin, VolumeEnd, FadeLengthInMilliseconds, StartTimeInMilliseconds);
+}
+
+
+/**
+ * Checks whether the sound has reached its end.
+ *
+ * @return true if the sound has finished; otherwise false.
+ */
+bool Audio::IsSoundFinished()
+{
+    return ma_sound_get_at_end(&sound);
+}
+
+
+/**
+ * Sets the sound's position using a FloatVector3.
+ *
+ * Can be used for both 2D and 3D audio.
+ * For 2D audio, only the X and Y components are used.
+ *
+ * @param XYZ Position of the sound.
+ */
+void Audio::SetSoundPosition(FloatVector3 XYZ)
+{
+    ma_sound_set_position(&sound, XYZ.x, XYZ.y, XYZ.z);
+}
+
+/**
+ * Gets the sound's position using a FloatVector3.
+ *
+ * Can be used for both 2D and 3D audio.
+ * For 2D audio, only the X and Y components are used.
+ *
+ */
+FloatVector3 Audio::GetSoundPosition()
+{
+    ma_vec3f Buffer = ma_sound_get_position(&sound);
+    return {Buffer.x, Buffer.y, Buffer.z};
+}
+
+
+
 void Audio::OverlappingSound()
 {
-    if (!sound_loaded)
+    if (!SoundLoaded)
     {
         warning("Sound is unloaded cannot play sound.");
         return;
     }
 
     ma_sound* clonedSound = new ma_sound();
-    if (ma_sound_init_copy(&engine, &sound, MA_SOUND_FLAG_DECODE, NULL, clonedSound) == MA_SUCCESS)
+    if (ma_sound_init_copy(&Engine, &sound, BLOCK_SOUND_FLAG_DECODE, NULL, clonedSound) == MA_SUCCESS)
     {
         ma_sound_start(clonedSound);
-        s_ActiveOverlappingSounds.push_back(clonedSound); // Pushes to the hidden backend tracker
+        ActiveOverlappingSounds.push_back(clonedSound); // Pushes to the hidden backend tracker
     }
     else
     {
@@ -97,123 +204,36 @@ void Audio::OverlappingSound()
     }
 }
 
+
 void Audio::UnloadSound()
 {
-    if (!sound_loaded)
+    if (!SoundLoaded)
     {
-        sound_loaded = MA_FALSE;
+        SoundLoaded = BLOCK_FALSE;
         warning("Sound is already unloaded.");
         return;
     }
 
     ma_sound_uninit(&sound);
-    sound_loaded = MA_FALSE;
+    SoundLoaded = BLOCK_FALSE;
 
-    trace("Unloaded Sound!");
+    audio("Unloaded Sound!");
 }
 
 Audio::~Audio()
 {
-    if (!sound_loaded)
+    if (!SoundLoaded)
     {
-        sound_loaded = MA_FALSE;
+        SoundLoaded = BLOCK_FALSE;
         return;
     }
 
     ma_sound_uninit(&sound);
-    sound_loaded = MA_FALSE;
+    SoundLoaded = BLOCK_FALSE;
 
-    info("Unloaded Sound!");
+    audio("Unloaded Sound!");
 }
 
-void AudioShutdown()
-{
-    if (init)
-    {
-        // Clean up any remaining overlapping sounds safely
-        for (ma_sound* pSound : s_ActiveOverlappingSounds)
-        {
-            if (pSound)
-            {
-                ma_sound_stop(pSound);
-                ma_sound_uninit(pSound);
-                delete pSound;
-            }
-        }
-        s_ActiveOverlappingSounds.clear();
 
-        init = false;
-        ma_engine_uninit(&engine);
-        info("Audio engine shutdown!");
-    }
-    else
-    {
-        error("Failed to shutdown audio engine the engine is not initialized or is already shutdown!");
-    }
-}
-
-// Audio callback & ResourceManager remain the same
-void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
-{
-    ma_data_source* pDataSource = (ma_data_source*)pDevice->pUserData;
-    ma_data_source_read_pcm_frames(pDataSource, pOutput, frameCount, NULL);
-    (void)pInput;
-}
-
-int ResourceManager::InitializeResourceManger(const char* sound)
-{
-    ma_device_config deviceConfig = ma_device_config_init(ma_device_type_playback);
-    deviceConfig.dataCallback = data_callback;
-
-    if (ma_device_init(NULL, &deviceConfig, &device) != MA_SUCCESS)
-    {
-        error("Failed to initialize audio device.");
-        return 1;
-    }
-
-    ma_resource_manager_config rmConfig = ma_resource_manager_config_init();
-    rmConfig.decodedFormat     = device.playback.format;
-    rmConfig.decodedChannels   = device.playback.channels;
-    rmConfig.decodedSampleRate = device.sampleRate;
-
-    if (ma_resource_manager_init(&rmConfig, &resourceManager) != MA_SUCCESS)
-    {
-        error("Failed to initialize resource manager.");
-        ma_device_uninit(&device);
-        return 1;
-    }
-
-    if (ma_resource_manager_data_source_init(&resourceManager, sound, MA_RESOURCE_MANAGER_DATA_SOURCE_FLAG_DECODE | MA_RESOURCE_MANAGER_DATA_SOURCE_FLAG_STREAM, NULL, &dataSource) != MA_SUCCESS)
-    {
-        error("Failed to initialize resource manager data source.");
-        ma_resource_manager_uninit(&resourceManager);
-        ma_device_uninit(&device);
-        return 1;
-    }
-
-    ma_data_source_set_looping(&dataSource, MA_TRUE);
-    device.pUserData = &dataSource;
-
-    if (ma_device_start(&device) != MA_SUCCESS)
-    {
-        error("Failed to start audio device!");
-        return 1;
-    }
-
-    IsInitialized = true;
-    return 0;
-}
-
-int ResourceManager::ResourceManagerShutdown()
-{
-    if (!IsInitialized) return 0;
-
-    ma_device_uninit(&device);
-    ma_resource_manager_data_source_uninit(&dataSource);
-    ma_resource_manager_uninit(&resourceManager);
-    
-    IsInitialized = false;
-    return 0;
-}
 
 
