@@ -1,8 +1,8 @@
-#ifndef DEBUGGER_HPP // This is a linker.
-#define DEBUGGER_HPP
+#pragma once // This is a linker.
 
-#include "Math/MathUtilities/MathUtilities.hpp"
-#include "Logger/Logger.hpp"
 #include "Utilities/Utilities.hpp"
+#include "Utilities/BlockResult.hpp"
+#include "Logger/Logger.hpp"
+#include "Math/MathUtilities/MathUtilities.hpp"
 
-#endif
+

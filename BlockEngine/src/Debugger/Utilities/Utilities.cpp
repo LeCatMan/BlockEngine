@@ -7,21 +7,28 @@ char CurrentRunningPath[1024];
 void GetCurrentRunningPath()
 {
 
+    #pragma region Timestamp Setup
+    // those are just to put the time to the hard-coded logs.
+    char TimeBuffer[64];
+    time_t Time = time(NULL);
+    strftime(TimeBuffer, sizeof(TimeBuffer), "%Ih %Mm %Ss %p", localtime(&Time));
+    #pragma endregion
+
     if (getcwd(CurrentRunningPath, sizeof(CurrentRunningPath)) == NULL) 
     {
         if (errno == ERANGE)
         {
-            error("Path is too long! Buffer size of %zu bytes is not enough.", sizeof(CurrentRunningPath));
+            printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, ("Path is too long!"));
         }
         else
         {
-            error("Failed to get current working directory: %s", strerror(errno));
+            printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, ("Failed to get current working directory: %s", strerror(errno)));
         }
         return;
     }
     else
     {
-        info("The current running path is: %s", CurrentRunningPath);
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, "1", "INFO", "Info", __FILE__, __LINE__, ("The current running path is: %s", CurrentRunningPath));
         return;
     }
     
@@ -62,17 +69,4 @@ char *GetFileText(const char *FileName)
 
 }
 
-// Fast string conversion for the logging system.
-const char* BlockGetErrorString(BlockResult Result) {
-    switch (Result) {
-        case BLOCK_SUCCESS:           return "SUCCESS";
-        case BLOCK_FAILURE:           return "FAILURE";
-        case BLOCK_ERR_NULL_POINTER:  return "ERR_NULL_POINTER";
-        case BLOCK_ERR_OUT_OF_MEMORY: return "ERR_OUT_OF_MEMORY";
-        case BLOCK_ERR_FILE_IO:       return "ERR_FILE_IO";
-        case BLOCK_ERR_INVALID_PARAM: return "ERR_INVALID_PARAM";
-        case BLOCK_ERR_INIT_FAILED:   return "ERR_INIT_FAILED";
-        default:                      return "UNKNOWN_ERROR";
-    }
-}
 

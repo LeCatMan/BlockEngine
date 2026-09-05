@@ -4,19 +4,20 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-#include "../../Debugger/Utilities/Utilities.hpp"
-#include "../../Debugger/Math/MathUtilities/MathUtilities.hpp"
+#include "../Math/MathUtilities/MathUtilities.hpp"
+#include "../Utilities/BlockResult.hpp"
+#include "../Utilities/Utilities.hpp"
 
-int LoggerInit(void);
-int LoggerShutdown(void);
-int Error(const char* Message, const char* File, int Line);
-int Trace(const char* Message, const char* File, int Line);
-int Info(const char* Message, const char* File, int Line);
-int Warning(const char* Message, const char* File, int Line);
-int Special(const char* Message, const char* File, int Line);
-int Debug(const char* Message, const char* File, int Line);
-int AudioLog(const char* Message, const char* File, int Line);
-int Rendering(const char* Message, const char* File, int Line);
+BlockResult LoggerInit(void);
+BlockResult LoggerShutdown(void);
+BlockResult Error(const char* Message, const char* File, int Line);
+BlockResult Trace(const char* Message, const char* File, int Line);
+BlockResult Info(const char* Message, const char* File, int Line);
+BlockResult Warning(const char* Message, const char* File, int Line);
+BlockResult Special(const char* Message, const char* File, int Line);
+BlockResult Debug(const char* Message, const char* File, int Line);
+BlockResult AudioLog(const char* Message, const char* File, int Line);
+BlockResult Rendering(const char* Message, const char* File, int Line);
 
 // Log error with the file and line location and time.
 #pragma region error

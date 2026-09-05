@@ -9,8 +9,8 @@ int main() {
     {
         // This is an audio object it make
         Audio AudioObject[2];
-        AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL, DEFAULT_VOLUME, false, DEFAULT_PITCH);
-        AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL, DEFAULT_VOLUME, false, DEFAULT_PITCH);
+        AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
+        AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
         Triangle MyTriangle(Color(180,180,180));
         Square MySquare(Color(155,155,180));
 
@@ -20,19 +20,19 @@ int main() {
             UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
-                AudioObject[0].OverlappingSound();
+                AudioObject[0].PlayOverlappingSound();
             }
             if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
             {
-                AudioObject[1].NoneOverlappingSound();
+                AudioObject[1].PlaySound();
             }
             if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
             {
-                AudioObject[1].NoneOverlappingSound();
+                AudioObject[1].PlaySound();
             }
             if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
             {
-                AudioObject[0].OverlappingSound();
+                AudioObject[0].PlayOverlappingSound();
             }
             BackGroundColor(Color(255,255,160), 255);
             MySquare.DrawSquare();

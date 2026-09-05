@@ -112,7 +112,7 @@ const LColor ORANGE = {255,130,0};
 static FILE* GlobalErrorFile = NULL;
 
 // Initialize logger at the programs start.
-int LoggerInit()
+BlockResult LoggerInit()
 {
     
     #pragma region Timestamp Setup
@@ -132,28 +132,31 @@ int LoggerInit()
     #pragma region Makes sure folder exists
     char MakeDir_cmd[1024];
     snprintf(MakeDir_cmd, sizeof(MakeDir_cmd), "mkdir -p %s", FolderName);
-    if (system(MakeDir_cmd) == BLOCK_SUCCESS)
+    if (system(MakeDir_cmd) == 0)
     {
-        printf("[\033[1mINFO\033[0m] -> Info in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", __FILE__, __LINE__, "Logger Failed to create directory!");
-    }
-    #pragma endregion
-
-    #pragma region Creates the folder if it doesnt exist
-    while (true)
-    {
-        int FilePath = snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
-
-        if(FilePath < 0 || FilePath >= sizeof(FileName))
+        #pragma region Creates the folder if it doesnt exist
+        while (true)
         {
-            snprintf(FailSafe, sizeof(FailSafe), "rm %s/*", FolderName);
-            system(FailSafe);
-        }
+            int FilePath = snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
 
-        snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
-        FILE* f = fopen(FileName, "r");
-        if (!f) break; // file doesn't exist then use it
-        fclose(f);
-        Number++;
+            if(FilePath < 0 || FilePath >= sizeof(FileName))
+            {
+                snprintf(FailSafe, sizeof(FailSafe), "rm %s/*", FolderName);
+                system(FailSafe);
+            }
+
+            snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
+            FILE* f = fopen(FileName, "r");
+            if (!f) break; // file doesn't exist then use it
+            fclose(f);
+            Number++;
+        }
+        #pragma endregion
+    }
+    else
+    {
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Logger Failed to create directory!");
+        return BLOCK_ERR_FILE_IO;
     }
     #pragma endregion
 
@@ -174,14 +177,14 @@ int LoggerInit()
     // absolutely nothing suspicious here
     // definitely just starting the logger
     dont_find_out_what_i_do();
-    return BLOCK_SUCCESS;
+    return BLOCK_SUCCESS_TRUE;
     #pragma endregion
 
 }
 
 
 // Shutdown logger at the programs end.
-int LoggerShutdown()
+BlockResult LoggerShutdown()
 {
 
     #pragma region Timestamp Setup
@@ -198,7 +201,7 @@ int LoggerShutdown()
         Info("Logger shutdown!", __FILE__, __LINE__);
         fclose(GlobalErrorFile);
         GlobalErrorFile = NULL;
-        return BLOCK_SUCCESS;
+        return BLOCK_SUCCESS_TRUE;
     }
     else
     {
@@ -211,7 +214,7 @@ int LoggerShutdown()
 
 
 // A template function to make other logger function
-int Template(const char* Message, const char* File, int Line, const char* CapitalType, const char* Type, const char* Color)
+BlockResult Template(const char* Message, const char* File, int Line, const char* CapitalType, const char* Type, const char* Color)
 {
 
     #pragma region Timestamp Setup
@@ -231,7 +234,7 @@ int Template(const char* Message, const char* File, int Line, const char* Capita
     if (GlobalErrorFile) {
         fprintf(GlobalErrorFile, "[%s] [%s] -> %s in <%s> at line <%d>: <%s>\n", TimeBuffer, CapitalType, Type, File, Line, Message);
         fflush(GlobalErrorFile); // ensure it's written immediately
-        return BLOCK_SUCCESS;
+        return BLOCK_SUCCESS_TRUE;
     }
     
     printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Failed to output an error to file!");
@@ -243,56 +246,56 @@ int Template(const char* Message, const char* File, int Line, const char* Capita
 
 
 // Log error with the file and line location and time.
-int Error(const char* Message, const char* File, int Line)
+BlockResult Error(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "ERROR", "Error", Bold ";" SlowBlink ";" "31");
 }
 
 
 // Log trace with the file and line location and time.
-int Trace(const char* Message, const char* File, int Line)
+BlockResult Trace(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "TRACE", "Trace", Bold ";" Foreground ";44;135;255");
 }
 
 
 // Log info with the file and line location and time.
-int Info(const char* Message, const char* File, int Line)
+BlockResult Info(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "INFO", "Info", Bold);
 }
 
 
 // Log warning with the file and line location and time.
-int Warning(const char* Message, const char* File, int Line)
+BlockResult Warning(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "WARNING", "Warning", Bold ";" SlowBlink ";" Foreground ";255;170;50");
 }
 
 
 // Log debug with the file and line location and time.
-int Debug(const char* Message, const char* File, int Line)
+BlockResult Debug(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "DEBUG", "Debug", Bold ";" Foreground ";255;0;255");
 }
 
 
 // Log audio with the file and line location and time.
-int AudioLog(const char* Message, const char* File, int Line)
+BlockResult AudioLog(const char* Message, const char* File, int Line)
 {
-    return Template(Message, File, Line, "AUDIO", "Audio", Bold ";" Foreground ";0;114;83");
+    return Template(Message, File, Line, "AUDIO", "Audio", Bold ";" Foreground ";36;226;120");
 }
 
 
 // Log rendering with the file and line location and time.
-int Rendering(const char* Message, const char* File, int Line)
+BlockResult Rendering(const char* Message, const char* File, int Line)
 {
-    return Template(Message, File, Line, "RENDERING", "Rendering", Bold ";" Foreground ";132;22;249");
+    return Template(Message, File, Line, "RENDERING", "Rendering", Bold ";" Foreground ";150;79;217");
 }
 
 
 // Special ... ;)
-int Special(const char* Message, const char* File, int Line)
+BlockResult Special(const char* Message, const char* File, int Line)
 {
     const char* Colors[] = {
         "255;0;0",
@@ -341,7 +344,7 @@ int Special(const char* Message, const char* File, int Line)
         fflush(GlobalErrorFile);
     }
 
-    return BLOCK_SUCCESS;
+    return BLOCK_SUCCESS_TRUE;
 }
 
 

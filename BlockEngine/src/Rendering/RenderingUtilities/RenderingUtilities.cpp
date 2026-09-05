@@ -10,8 +10,10 @@
 GLFWwindow *Bwindow;
 GLFWmonitor *Monitor;
 
-void framebuffer_size_callback(GLFWwindow *Bwindow, int WindowWidth, int WindowHeight)
+// Update the viewport to match the window size.
+void FrameBufferSizeCallback(GLFWwindow *Bwindow, int WindowWidth, int WindowHeight)
 {
+    //         x  y    width        height
     glViewport(0, 0, WindowWidth, WindowHeight);
 }
 
@@ -42,16 +44,13 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
         return BLOCK_ERR_INIT_FAILED;
     }
 
-    glfwSetFramebufferSizeCallback(Bwindow, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(Bwindow, FrameBufferSizeCallback);
     
     Monitor = glfwGetPrimaryMonitor();
     if (Monitor == NULL)
     {
         error("Couldn't get the monitor");
-        if (VSync)
-        {
-            glfwSwapInterval(1);
-        }
+        return BLOCK_ERR_INIT_FAILED;
     }
     else
     {
@@ -65,7 +64,7 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
         }
     }
     rendering("Rendering engine initialized!");
-    return BLOCK_SUCCESS;
+    return BLOCK_SUCCESS_TRUE;
 }
 
 // Closes the window ? what did you expect ;) .
@@ -212,7 +211,6 @@ const float TriangleVertices[9] = {
 const unsigned int TriangleIndices[3] = {
     0, 1, 2
 };
-
 
 const float SquarePerVertexColor[24] = {
     // bottom left vertex
@@ -467,6 +465,10 @@ void CreateVAO(unsigned int *VAO)
     glBindVertexArray(*VAO);
 }
 
+void DestroyVAO(unsigned int VAO)
+{
+    glDeleteVertexArrays(1, &VAO);
+}
 
 // ========================
 // |         VBO          |
@@ -510,6 +512,10 @@ void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVe
     glEnableVertexAttribArray(2);
 }
 
+void DestroyVBO(unsigned int VBO)
+{
+    glDeleteBuffers(1, &VBO);
+}
 
 // ========================
 // |         EBO          |
@@ -523,6 +529,10 @@ void CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, Size, Indices, GL_STATIC_DRAW);
 }
 
+void DestroyEBO(unsigned int EBO)
+{
+    glDeleteBuffers(1, &EBO);
+}
 
 // ========================
 // |    Shader Program    |
@@ -553,30 +563,20 @@ void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int
     }
 }
 
+void DestroyShader(unsigned int Shader)
+{
+    glDeleteProgram(Shader);
+}
 
 // ========================
 // |       Cleanup        |
 // ========================
 
-void DestroyVBO(unsigned int VBO)
-{
-    glDeleteBuffers(1, &VBO);
-}
 
-void DestroyVAO(unsigned int VAO)
-{
-    glDeleteVertexArrays(1, &VAO);
-}
 
-void DestroyEBO(unsigned int EBO)
-{
-    glDeleteBuffers(1, &EBO);
-}
 
-void DestroyShader(unsigned int Shader)
-{
-    glDeleteProgram(Shader);
-}
+
+
 
 
 

@@ -32,7 +32,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 # Type 'make san' to wipe, build with AddressSanitizer, and run
-san:
+debug:
 	$(MAKE) -f BlockEngine.mk clean
 	$(MAKE) -f BlockEngine.mk ASAN=1
 	./BlockEngineDEBUG
