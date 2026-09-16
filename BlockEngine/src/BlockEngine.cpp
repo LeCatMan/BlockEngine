@@ -1,4 +1,4 @@
-#include "BlockEngine.hpp"// we include this because we need it :D
+#include "BlockEngine.hpp"
 
 
 int main() {
@@ -11,13 +11,16 @@ int main() {
         Audio AudioObject[2];
         AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
         AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
-        Triangle MyTriangle(Color(180,180,180));
-        Square MySquare(Color(155,155,180));
+        Triangle MyTriangle(Color(180.0f, 180.0f, 180.0f, 255.0f));
+        Square MySquare(Color(155.0f, 155.0f, 180.0f, 255.0f));
+        Texture Brick;
+        Brick.LoadTexture("src/Assets/BlockEngine/Images/Block-Engine/Block.png", GL_NEAREST, GL_NEAREST);
+        Brick.LoadTextureMesh(Color(0.0f, 0.0f, 0.0f, 255.0f), "src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquarePosColorUV, sizeof(SquarePosColorUV), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), true);
+        
 
         info("Entering Game Loop");
         while (!WindowShouldClose())
         {            
-            UpdateWindow();
             if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
             {
                 AudioObject[0].PlayOverlappingSound();
@@ -34,9 +37,11 @@ int main() {
             {
                 AudioObject[0].PlayOverlappingSound();
             }
-            BackGroundColor(Color(255,255,160), 255);
+            BackGroundColor(Color(255.0f,255.0f,160.0f,255.0f));
             MySquare.DrawSquare();
             MyTriangle.DrawTriangle();
+            Brick.DrawTexture2D();
+            UpdateWindow();
         }
         info("Closed Window");
         info("Exited Game Loop");

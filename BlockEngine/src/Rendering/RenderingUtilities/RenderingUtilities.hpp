@@ -16,45 +16,57 @@ extern const char *TestFragmentShaderSource;
 extern const char *TestVertexShaderSource;
 class Shape2D;
 
-/**
- * Color
- * -----
- * Represents an RGB color using values from 0 to 255.
- *
- * Example:
- *     Color MyColor(255, 128, 64);
- */
+// square
+extern const float SquarePerVertexColor[24];
+extern const float SquarePosColorUV[32];
+extern const float SquareVertices[12];
+extern const unsigned int SquareIndices[6];
+
+// Triangle
+extern const float TrianglePerVertexColor[18];
+extern const float TrianglePosColorUV[24];
+extern const float TriangleVertices[9];
+extern const unsigned int TriangleIndices[3];
+
 struct Color
 {
     float r;
     float g;
     float b;
+    float a;
 
-    Color(float r, float g, float b)
+    Color(float r, float g, float b, float a)
     {
         this->r = r / 255.0f;
         this->g = g / 255.0f;
         this->b = b / 255.0f;
+        this->a = a / 255.0f;
     }
 };
 
-/**
- * Texture
- * -------
- * Handles texture creation, loading, and unloading.
- *
- * Example:
- *     Texture MyTexture;
- *     MyTexture.CreateTexture("texture.png", GL_LINEAR, GL_LINEAR);
- */
+
 class Texture
 {
 private:
     unsigned int texture;
+    char VertexShader[256];
+    char FragmentShader[256];
+    unsigned int Texture2DVAO;
+    unsigned int Texture2DVBO;
+    unsigned int Texture2DEBO;
+    unsigned int Texture2DShader;
+    size_t SizeOfMeshIndices;
 
 public:
-    void CreateTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter);
-    void LoadTexture(Shape2D& shape);
+    void LoadTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter);
+    // plz don't use this its just some bullshit i need
+    void drawtexture2D(size_t ShapeIndicesSize);
+
+    void DrawTexture2D()
+    {
+        drawtexture2D(SizeOfMeshIndices);
+    }
+    void LoadTextureMesh(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
     void UnloadTexture();
     ~Texture();
 };
@@ -84,6 +96,7 @@ public:
 
     ~Shader2D();
     friend Shape2D;
+    friend Texture;
 };
 
 /**
@@ -102,10 +115,9 @@ protected:
     unsigned int Shape2DVBO;
     unsigned int Shape2DEBO;
     unsigned int Shape2DShader;
-    friend class Texture;
 public:
 
-    Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture);
+    Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor);
 
     ~Shape2D();
 
@@ -124,11 +136,6 @@ public:
 // |        Shapes        |
 // ========================
 
-// Triangle
-extern const float TrianglePerVertexColor[18];
-extern const float TrianglePosColorUV[24];
-extern const float TriangleVertices[9];
-extern const unsigned int TriangleIndices[3];
 
 /**
  * Triangle
@@ -149,8 +156,7 @@ public:
         sizeof(TrianglePerVertexColor),
         TriangleIndices,
         sizeof(TriangleIndices),
-        true,
-        false)
+        true)
     {
         rendering("Creating Triangle Resources");
     }
@@ -171,11 +177,6 @@ public:
     }
 };
 
-// square
-extern const float SquarePerVertexColor[24];
-extern const float SquarePosColorUV[32];
-extern const float SquareVertices[12];
-extern const unsigned int SquareIndices[6];
 
 /**
  * Square
@@ -188,7 +189,15 @@ extern const unsigned int SquareIndices[6];
 class Square : public Shape2D
 {
 public:
-    Square(Color color) : Shape2D(color, "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), false, false)
+    Square(Color color) : Shape2D(
+        color,
+        "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert",
+        "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag",
+        SquareVertices,
+        sizeof(SquareVertices),
+        SquareIndices,
+        sizeof(SquareIndices),
+        false)
     {
         rendering("Creating Square Resources");
     }
@@ -205,7 +214,7 @@ public:
      */
     void DrawSquare()
     {
-        DrawShape2D(sizeof(SquareIndices) / sizeof(SquareIndices[0]));
+        DrawShape2D((sizeof(SquareIndices) / sizeof(SquareIndices[0])));
     }
 };
 
@@ -229,9 +238,9 @@ public:
 };
 
 
-int InitializeWindow(int WindowWidth,int WindowHeight,const char *WindowTitle, bool VSync);
+BlockResult InitializeWindow(int WindowWidth,int WindowHeight,const char *WindowTitle, bool VSync);
 void UpdateWindow();
-bool WindowShouldClose();
-void CloseWindow();
-void BackGroundColor(Color color, int opacity);
-void RenderingShutdown();
+BlockResult WindowShouldClose();
+BlockResult CloseWindow();
+BlockResult BackGroundColor(Color color);
+BlockResult RenderingShutdown();

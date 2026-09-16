@@ -7,6 +7,7 @@
 // #      Window Stuff    #
 // ########################
 
+static bool RenderingInitialized = BLOCK_SUCCESS_FALSE;
 GLFWwindow *Bwindow;
 GLFWmonitor *Monitor;
 
@@ -18,11 +19,17 @@ void FrameBufferSizeCallback(GLFWwindow *Bwindow, int WindowWidth, int WindowHei
 }
 
 // Initialize the rendering engine with default settings.
-int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle, bool VSync)
+BlockResult InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle, bool VSync)
 {
+    if (RenderingInitialized == BLOCK_SUCCESS_FALSE)
+    {
+    #pragma region load glad and glfw and make the window
+
+
     if (!glfwInit())
     {
         error("Failed to initialize GLFW");
+        RenderingInitialized = BLOCK_SUCCESS_FALSE;
         return BLOCK_ERR_INIT_FAILED;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -34,6 +41,7 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
     {
         error("Failed to create GLFW window");
         glfwTerminate();
+        RenderingInitialized = BLOCK_SUCCESS_FALSE;
         return BLOCK_ERR_INIT_FAILED;
     }
     glfwMakeContextCurrent(Bwindow);
@@ -41,8 +49,15 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         error("Failed to initialize GLAD");
+        RenderingInitialized = BLOCK_SUCCESS_FALSE;
         return BLOCK_ERR_INIT_FAILED;
     }
+
+
+    #pragma endregion
+
+    #pragma region set the fps and vsync
+
 
     glfwSetFramebufferSizeCallback(Bwindow, FrameBufferSizeCallback);
     
@@ -50,6 +65,7 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
     if (Monitor == NULL)
     {
         error("Couldn't get the monitor");
+        RenderingInitialized = BLOCK_SUCCESS_FALSE;
         return BLOCK_ERR_INIT_FAILED;
     }
     else
@@ -63,36 +79,100 @@ int InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle,
             glfwSwapInterval(1);
         }
     }
-    rendering("Rendering engine initialized!");
-    return BLOCK_SUCCESS_TRUE;
-}
 
-// Closes the window ? what did you expect ;) .
-void CloseWindow()
-{
-    glfwSetWindowShouldClose(Bwindow, true);
-}
 
-// Clean up and shutdown engine.
-void RenderingShutdown()
-{
-    #pragma region just shutting down
-    rendering("Rendering engine shutdown!");
-    glfwTerminate();
     #pragma endregion
+    
+    rendering("Rendering engine initialized!");
+    rendering("Window initialized!");
+    RenderingInitialized = BLOCK_SUCCESS_TRUE;
+    return BLOCK_SUCCESS_TRUE;
+    }
+    else
+    {
+        warning("Cannot initialize the window because the window engine is already Initialized");
+        return BLOCK_FAILURE;
+    }
+    
+
 }
 
-// Changes the background color.
-void BackGroundColor(Color color, int opacity)
+
+BlockResult CloseWindow()
 {
-    glClearColor((color.r), (color.g), (color.b), (opacity / 255.0f));
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        glfwSetWindowShouldClose(Bwindow, true);
+        rendering("Closed the window");
+        return BLOCK_SUCCESS_TRUE;
+    }
+    else 
+    {
+        warning("Cannot close the window because the rendering engine is not Initialized");
+        return BLOCK_FAILURE;
+    }
+}
+
+
+BlockResult RenderingShutdown()
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        rendering("Rendering engine shutdown!");
+        glfwTerminate();
+        rendering("Shutingdown the Rendering Engine!");
+        return BLOCK_SUCCESS_TRUE;
+    }
+    else 
+    {
+        warning("Cannot close the window because the rendering engine is not Initialized");
+        return BLOCK_FAILURE;
+    }
+
+}
+
+
+BlockResult BackGroundColor(Color color)
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        glClearColor((color.r), (color.g), (color.b), (color.a));
+        glClear(GL_COLOR_BUFFER_BIT);
+        return BLOCK_SUCCESS_TRUE;
+    }
+    else
+    {
+        warning("Cannot change the background color because the rendering engine is not Initialized");
+        return BLOCK_FAILURE;
+    }
 }
 
 // Checks the close flag of the specified window.
-bool WindowShouldClose()
+BlockResult WindowShouldClose()
 {
-    return glfwWindowShouldClose(Bwindow);
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        if (glfwWindowShouldClose(Bwindow) == true)
+        {
+            return BLOCK_SUCCESS_TRUE;
+        }
+        else if (glfwWindowShouldClose(Bwindow) == false)
+        {
+            return BLOCK_SUCCESS_FALSE;
+        }
+        else
+        {
+            error("wtf did you do ? i mean there is a possible error which is glfw is not initialized but i just checked for that ???");
+        }
+        
+    }
+    else
+    {
+        warning("Cannot get the state of the window because the rendering engine is not Initialized");
+        return BLOCK_FAILURE;
+    }
+    return BLOCK_FAILURE;
+
 }
 
 // process rendering events.
@@ -332,65 +412,6 @@ const unsigned int SquareIndices[6] = {
 // ########################
 // #      Rendering       #
 // ########################
-// ========================
-// |       Texture        |
-// ========================
-
-//GL_NEAREST_MIPMAP_NEAREST
-void Texture::CreateTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter)
-{
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinifyFilter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagnifyingFilter);
-
-    // load and generate the texture
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(ImagePath, &width, &height, &nrChannels, 0);
-
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        error("Failed to generate texture!");
-    }
-
-    stbi_image_free(data);
-};
-
-//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-void Texture::LoadTexture(Shape2D& shape)
-{
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glBindVertexArray(shape.Shape2DVAO);
-};
-
-void Texture::UnloadTexture()
-{
-    if (texture != 0)
-    {
-        glDeleteTextures(1, &texture);
-        texture = 0;
-    }
-    else
-    {
-        warning("The texture is already been unloaded!");
-    }
-}
-
-Texture::~Texture()
-{
-    if (texture != 0)
-    {
-        UnloadTexture();
-    }
-};
 
 
 // ========================
@@ -410,7 +431,7 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 
     VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
     glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
-    glCompileShader(VertexShader);                              // compiles the shader ? ;)
+    glCompileShader(VertexShader);
     free(vertexshadersource);
     vertexshadersource = nullptr;
 
@@ -470,6 +491,7 @@ void DestroyVAO(unsigned int VAO)
     glDeleteVertexArrays(1, &VAO);
 }
 
+
 // ========================
 // |         VBO          |
 // ========================
@@ -489,13 +511,15 @@ void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVe
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
 
-    if (PerVertexColor && !texture)
+    if (PerVertexColor)
     {
+        glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
     }
 
     if (texture)
     {
+        glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(PerVertexColor && texture ? 6 * sizeof(float) : 3 * sizeof(float)));
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -506,16 +530,14 @@ void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVe
         float TBC[4] = {1.0f, 0.0f, 1.0f, 1.0f};// this is the color of the texture
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, TBC);
     }
-
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
 }
 
 void DestroyVBO(unsigned int VBO)
 {
     glDeleteBuffers(1, &VBO);
 }
+
 
 // ========================
 // |         EBO          |
@@ -533,6 +555,7 @@ void DestroyEBO(unsigned int EBO)
 {
     glDeleteBuffers(1, &EBO);
 }
+
 
 // ========================
 // |    Shader Program    |
@@ -561,6 +584,7 @@ void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int
         glGetProgramInfoLog(*Shader, 512, NULL, infoLog);
         printf("Shader linking failed: %s\n", infoLog);
     }
+    
 }
 
 void DestroyShader(unsigned int Shader)
@@ -568,41 +592,133 @@ void DestroyShader(unsigned int Shader)
     glDeleteProgram(Shader);
 }
 
+
 // ========================
-// |       Cleanup        |
+// |       Texture        |
 // ========================
 
 
+void Texture::LoadTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter)
+{
+    rendering("Loading texture");
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinifyFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagnifyingFilter);
+
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(ImagePath, &width, &height, &nrChannels, 4);
+
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        error("Failed to generate texture!");
+    }
+
+    stbi_image_free(data);
+};
+
+//LoadTextureMesh(Color(0.0f, 0.0f, 0.0f, 255.0f), "src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false);
+void Texture::LoadTextureMesh(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
+{
+    SizeOfMeshIndices = MeshIndicesSize / MeshIndicesArraySize;
+    rendering("Loading the texture mesh");
+    strcpy(VertexShader, VertexShaderPath);
+    strcpy(FragmentShader, FragmentShaderPath);
+    Shader2D Shader(VertexShader, FragmentShader);
+    CreateVAO(&Texture2DVAO);
+    CreateVBO(Vertices, VerticesSize, &Texture2DVBO, PerVertexColor, true);
+    CreateEBO(MeshIndices, MeshIndicesSize, &Texture2DEBO);
+    ShaderProgram(&Texture2DShader, Shader.VertexShader, Shader.FragmentShader);
+}
 
 
+void Texture::drawtexture2D(size_t ShapeIndicesSize)
+{
+    glUseProgram(Texture2DShader);
+    glUniform1i(glGetUniformLocation(Texture2DShader, "texture1"), 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(Texture2DVAO);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, ShapeIndicesSize, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
 
+void Texture::UnloadTexture()
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        if (texture != 0)
+        {
+            DestroyShader(Texture2DShader);
+            DestroyVAO(Texture2DVAO);
+            DestroyVBO(Texture2DVBO);
+            DestroyEBO(Texture2DEBO);
+            glDeleteTextures(1, &texture);
+            texture = 0;
+        }
+        else
+        {
+            warning("The texture is already been unloaded!");
+        }
+    }
+    else
+    {
+        warning("Cannot unload texture because the rendering engine is not initialized!");
+    }
+    rendering("Unloaded the texture");
+}
 
-
-
-
+Texture::~Texture()
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        if (texture != 0)
+        {
+            DestroyShader(Texture2DShader);
+            DestroyVAO(Texture2DVAO);
+            DestroyVBO(Texture2DVBO);
+            DestroyEBO(Texture2DEBO);
+            glDeleteTextures(1, &texture);
+            texture = 0;
+        }
+    }
+    else
+    {
+        warning("Cannot unload texture because the rendering engine is not initialized!");
+    }
+    rendering("Unloaded the texture");
+};
 
 
 // ========================
 // |          2D          |
 // ========================
 
-// Creates the Shapes resources.
-// it should look like this
-// "Shape2D(color, "src/Assets/Shaders/BasicPerVertexVertexShader.vert", "src/Assets/Shaders/BasicPerVertexFragmentShader.frag", TrianglePerVertexColorVertices, sizeof(TrianglePerVertexColorVertices), TriangleIndices, sizeof(TriangleIndices), true, false)"
-Shape2D::Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor, bool HasTexture)
+
+//Creates the Shapes resources.
+Shape2D::Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor)
 {
     strcpy(VertexShader, VertexShaderPath);
     strcpy(FragmentShader, FragmentShaderPath);
     Shader2D Shader(VertexShader, FragmentShader);
     CreateVAO(&Shape2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, HasTexture);
+    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false);
     CreateEBO(ShapeIndices, ShapeIndicesSize, &Shape2DEBO);
     ShaderProgram(&Shape2DShader, Shader.VertexShader, Shader.FragmentShader);
     glUseProgram(Shape2DShader);
-    glUniform3f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b);
+    glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);
 }
 
-// Draws the the shape.
+
 void Shape2D::DrawShape2D(size_t ShapeIndicesSize)
 {
     // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -616,6 +732,7 @@ void Shape2D::DrawShape2D(size_t ShapeIndicesSize)
     glDrawElements(GL_TRIANGLES, ShapeIndicesSize, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
 
 // Destroys the Shapes resources.
 Shape2D::~Shape2D()

@@ -305,6 +305,7 @@ BlockResult Audio::IsSoundFinished()
 }
 
 
+// Stops the sound.
 BlockResult Audio::StopSound()
 {
     if (!SoundLoaded)
@@ -325,6 +326,7 @@ BlockResult Audio::StopSound()
 }
 
 
+// Starts the sound after stopping it.
 BlockResult Audio::StartSound()
 {
     if (!SoundLoaded)
@@ -345,6 +347,7 @@ BlockResult Audio::StartSound()
 }
 
 
+// Make the audio loop.
 BlockResult Audio::SetLooping(bool State)
 {
     if (!SoundLoaded)
@@ -359,6 +362,11 @@ BlockResult Audio::SetLooping(bool State)
 }
 
 
+/**
+ * Checks whether the sound is looping.
+ *
+ * @return true if the sound is Looping; otherwise false.
+ */
 BlockResult Audio::IsSoundLooping()
 {
     if (!SoundLoaded)

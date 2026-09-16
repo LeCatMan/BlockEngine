@@ -10,7 +10,7 @@
 
 /**
  * Initialize Block Engine
- * -----------------------
+ * 
  * Initializes the Logger, Window, Input, and Audio systems,
  * and sets the key used to exit the engine.
  *
@@ -19,6 +19,7 @@
  * @param title Window title.
  * @param exit_key Key used to exit the engine.
  * @param volume Master volume.
+ * @param VSync VSync.
  *
  * Example:
  *     InitializeBlockEngine(800, 600, "Test", BLOCK_KEY_ESCAPE);
@@ -39,9 +40,6 @@ inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char 
  * Shutdown Block Engine
  * ---------------------
  * Shuts down the Block Engine systems and closes the program.
- *
- * Example:
- *     ShutdownBlockEngine();
  */
 inline void BlockEngineShutdown()
 {
@@ -54,3 +52,5 @@ inline void BlockEngineShutdown()
 
     LoggerShutdown();
 }
+
+

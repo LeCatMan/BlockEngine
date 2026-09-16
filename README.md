@@ -1,16 +1,12 @@
-# 🧱 Block Engine
+# Block Engine
 
 **A lightweight game engine built to keep game development simple without taking control away from the developer.**
 
-> **Simplicity when you want it. Control when you need it.**
+## What is Block Engine?
 
-## 🎮 What is Block Engine?
-
-Block Engine is a custom-made game engine written in **C++ and C**, currently targeting **Linux**.
+Block Engine is a custom made game engine written in **C++ and C**.
 
 Block Engine provides a simple interface for building games through **its C and C++ API**, while still giving developers control over the engine.
-
-The project is focused on building the core systems needed for **2D and 3D game development**.
 
 ---
 
@@ -20,110 +16,36 @@ The project is focused on building the core systems needed for **2D and 3D game 
 
 ---
 
-## ✨ Current Features
+## Current Features
 
-* 🖥️ Window creation and management
-* 🎨 OpenGL rendering
-* 🔺 Basic shape rendering
-* 🎮 Keyboard input and key events
-* 🔊 Audio playback
-* 📝 Logging and debugging utilities
-* 🎯 C and C++ API
-* 🐧 Linux support
-
----
-
-## 🔌 API
-
-Block Engine is built API-first: the core runtime is simply a thin wrapper around a modular C and C++ API.
-
-* **System Control:** Initialize and drive windowing, rendering, input, and audio directly from code.
-* **Extensibility:** Tweak system behaviors, inject custom C/C++ modules, or build whole gameplay frameworks on top.
-* **Direct Access:** Use high-level engine abstractions when you want speed, or reach into lower-level internals when you need fine-grained control.
+* Window creation and management
+* OpenGL rendering
+* Basic shape rendering
+* Keyboard input and key events
+* Audio
+* Logging and debugging utilities
+* C and C++ API
+* Linux support
 
 ---
 
-## 💻 Example
+## API
 
-A basic Block Engine program currently looks like this:
-
-```cpp
-#include "BlockEngine.hpp"// we include this because we need it :D
-
-int main() {
-    // here we initialize the (Logger, Window, Input, Audio) and set the exit key.
-    InitializeBlockEngine(800, 600, "Block Engine", BLOCK_KEY_ESCAPE, 1.0f, true);
-
-    // You will have to put it in in {} because the AudioObject and (MyTriangle,MySquare) will have to destroy there resources before shutdown
-    {
-        // This is an audio object it make
-        Audio AudioObject[2];
-        AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
-        AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", DEFAULT_VOLUME, false, DEFAULT_PITCH);
-        Triangle MyTriangle(Color(180,180,180));
-        Square MySquare(Color(155,155,180));
-
-        info("Entering Game Loop");
-        while (!WindowShouldClose())
-        {
-
-            UpdateWindow();
-            if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
-            {
-                AudioObject[0].OverlappingSound();
-            }
-            if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
-            {
-                AudioObject[1].NoneOverlappingSound();
-            }
-            if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
-            {
-                AudioObject[1].NoneOverlappingSound();
-            }
-            if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
-            {
-                AudioObject[0].OverlappingSound();
-            }
-            BackGroundColor(Color(255,255,160), 255);
-            MySquare.DrawSquare();
-            MyTriangle.DrawTriangle();
-        }
-        info("Closed Window");
-        info("Exited Game Loop");
-    }
-
-    BlockEngineShutdown();
-    return 0;
-}
-```
+Block Engine is built API first: the core runtime is simply a thin wrapper around a modular C and C++ API.
 
 ---
 
-## 🧭 Vision
+## Vision
 
 Block Engine is made for developers who want useful abstractions without being locked away from the systems underneath.
 
-But if you want to understand, modify, or work directly with the lower-level systems, you should be able to.
-
 ---
 
-## 🚧 Development Status
+## Development Status
 
-Block Engine is currently in **Alpha 0.66** and is actively being developed.
+Block Engine is currently in **Alpha 0.68** and is actively being developed.
 
-It is an early-stage project, so APIs and features may change, break, or be replaced as development continues.
-
-### Current Platform
-
-* 🐧 **Linux** — Supported
-
-### Planned Platform Support
-
-* 🪟 **Windows** — Planned for consideration after 2D and 3D support
-
-The long-term goal is to support both **2D and 3D** game development.
-
-Current development is focused on building the core engine and gradually expanding its capabilities.
+It is an early stage project so the APIs and features may change, break, or be replaced as development continues.
 
 ---
 
@@ -160,8 +82,6 @@ The roadmap will evolve as the engine develops.
 * [x] Linux
 * [ ] Windows
 
-> The roadmap is not a promise or a fixed schedule. Features may be changed, removed, or added as development continues.
-
 ---
 
 ## 🛠️ Built With
@@ -178,31 +98,19 @@ Block Engine currently uses:
 
 ---
 
-## ❤️ Contributing
+## Contributing
 
-Contributions to Block Engine are welcome!
-
-* ⭐ Star the repository
-* 🐛 Report bugs
-* 💡 Suggest features and improvements
-* 💻 Contribute code
-* 📢 Share Block Engine with others
-
-Before making major changes, please open an issue to discuss them first. 🚀
+You can help me by writing code and reporting bugs.
 
 ---
 
-## 💬 Discord
-
-Have questions, want to share something you've made, or just want to hang out?
-
-Everyone is welcome. We'd love to have you! 👋
+## Discord
 
 **[Join the Block Engine Discord](https://discord.gg/7Y6rtN9wu7)**
 
 ---
 
-## 📜 License
+## License
 
 Block Engine is distributed under the **Block Engine License**.
 
@@ -224,12 +132,24 @@ This includes commercially selling, licensing, renting, leasing, hosting, remote
 
 The complete legal terms are available in `LICENSE.md`.
 
-> **Important:** This section is only a plain-language summary. It does not replace, modify, expand, restrict, override, or otherwise alter the Block Engine License. The Block Engine License is the controlling legal document and takes precedence over this summary in all circumstances.
+> **Important:** This section is only a plain language summary. It does not replace, modify, expand, restrict, override, or otherwise alter the Block Engine License. The Block Engine License is the controlling legal document and takes precedence over this summary in all circumstances.
 
 ---
 
-## 🧱 About
+## About
 
-Block Engine is a personal open-source game engine project built from the ground up with a focus on **simplicity, control, and learning**.
+Block Engine is a personal open source game engine project built from the ground up with a focus on **simplicity, control, and learning**.
 
-Thanks for checking out Block Engine! ❤️
+Thanks for checking out my Engine!
+
+---
+
+## AI Use
+
+Yes i use ai **BUT** i only use it to:
+ * Explane bits of code i find undocumented or poorly documented
+ * To make comments because it's faster than me
+ * to read walls of errors in compile time to tell me where they happend then **i** fix them
+
+
+
