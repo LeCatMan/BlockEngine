@@ -12,7 +12,7 @@ Block Engine provides a simple interface for building games through **its C and 
 
 ## Preview
 
-<img width="800" height="632" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.6Preview.png" />
+<img width="800" height="632" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.68Preview.png" />
 
 ---
 
@@ -64,7 +64,7 @@ The roadmap will evolve as the engine develops.
 ### 2D
 
 * [x] Basic shapes
-* [ ] Texture system
+* [x] Texture system
 * [ ] Sprite rendering
 * [ ] 2D camera system
 * [ ] Text rendering
@@ -149,7 +149,7 @@ Thanks for checking out my Engine!
 Yes i use ai **BUT** i only use it to:
  * Explane bits of code i find undocumented or poorly documented
  * To make comments because it's faster than me
- * to read walls of errors in compile time to tell me where they happend then **i** fix them
+ * to read walls of errors in compile time to tell me where they happend then **i fix them**
 
 
 
