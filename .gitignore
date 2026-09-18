@@ -2,10 +2,12 @@
 *.o
 *.a
 *.so
+*.dll.a
 
-# Build directories
+# CMake build directories
 build/
 cmake-build-*/
+BlockEngine/external/glfw-3.5.1/build-win/
 
 # Logs / runtime output
 Logs/
