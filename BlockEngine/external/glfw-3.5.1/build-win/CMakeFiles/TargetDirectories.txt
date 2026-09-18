@@ -1,0 +1,15 @@
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/uninstall.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/edit_cache.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/rebuild_cache.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/list_install_components.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/install.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/install/local.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/CMakeFiles/install/strip.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/glfw.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/update_mappings.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/edit_cache.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/rebuild_cache.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/list_install_components.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/install.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/install/local.dir
+/home/le007/Projects/C/Block-Engine/BlockEngine/external/glfw-3.5.1/build-win/src/CMakeFiles/install/strip.dir

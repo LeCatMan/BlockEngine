@@ -130,9 +130,14 @@ BlockResult LoggerInit()
     #pragma endregion
 
     #pragma region Makes sure folder exists
-    char MakeDir_cmd[1024];
-    snprintf(MakeDir_cmd, sizeof(MakeDir_cmd), "mkdir -p %s", FolderName);
-    if (system(MakeDir_cmd) == 0)
+    
+    #ifdef _WIN32
+        int MakeDirResult = _mkdir(FolderName);
+    #else
+        int MakeDirResult = mkdir(FolderName, 0777);
+    #endif
+
+    if (MakeDirResult == 0 || errno == EEXIST)
     {
         #pragma region Creates the folder if it doesnt exist
         while (true)

@@ -8,8 +8,13 @@
 #include <new>
 
 
-#define DEFAULT_VOLUME 1.0f
-#define DEFAULT_PITCH 1.0f
+#define BLOCK_DEFAULT_VOLUME 1.0f
+#define BLOCK_DEFAULT_PITCH 1.0f
+
+#ifdef PlaySound
+#undef PlaySound
+#endif
+
 
 /* Sound flags. */
 typedef enum BlockSoundFlags
@@ -53,6 +58,10 @@ BLOCK_SOUND_FLAG_NO_SPATIAL     = 0x00004000
 inline BlockSoundFlags operator|(BlockSoundFlags a, BlockSoundFlags b) {
     return static_cast<BlockSoundFlags>(static_cast<int>(a) | static_cast<int>(b));
 }
+
+
+
+
 
 
 class Audio

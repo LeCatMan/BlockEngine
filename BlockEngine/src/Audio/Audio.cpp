@@ -457,7 +457,6 @@ FloatVector3 Audio::GetSoundPosition()
 }
 
 
-// Deletes the sound from memory.
 BlockResult Audio::UnloadSound()
 {
     if (Initialized == BLOCK_SUCCESS_TRUE)

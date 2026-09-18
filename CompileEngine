@@ -4,8 +4,8 @@ cd BlockEngine
 
 if [ $# -eq 0 ]; then
     make -f BlockEngine.mk run
-elif [ "$1" = "run" ]; then
-    ./BlockEngine
+elif [ "$1" = "windows" ]; then
+    make -f BlockEngine.mk run-windows
 else
     make -f BlockEngine.mk "$@"
 fi

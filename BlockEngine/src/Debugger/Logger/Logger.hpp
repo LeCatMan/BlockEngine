@@ -4,9 +4,16 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include "../Math/MathUtilities/MathUtilities.hpp"
 #include "../Utilities/BlockResult.hpp"
 #include "../Utilities/Utilities.hpp"
+
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 
 BlockResult LoggerInit(void);
 BlockResult LoggerShutdown(void);

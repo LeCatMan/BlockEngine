@@ -31,7 +31,7 @@ Block Engine provides a simple interface for building games through **its C and 
 
 ## API
 
-Block Engine is built API first: the core runtime is simply a thin wrapper around a modular C and C++ API.
+Block Engine is designed API first: the core runtime is simply a thin wrapper around a modular C and C++ API.
 
 ---
 
@@ -43,7 +43,7 @@ Block Engine is made for developers who want useful abstractions without being l
 
 ## Development Status
 
-Block Engine is currently in **Alpha 0.68** and is actively being developed.
+Block Engine is currently in **Alpha 0.69** and is actively being developed.
 
 It is an early stage project so the APIs and features may change, break, or be replaced as development continues.
 
@@ -80,7 +80,7 @@ The roadmap will evolve as the engine develops.
 ### Platforms
 
 * [x] Linux
-* [ ] Windows
+* [x] Windows
 
 ---
 
@@ -95,6 +95,8 @@ Block Engine currently uses:
 * **GLAD**
 * **miniaudio**
 * **stb**
+
+> Every library is included with the engine so it's easier to set up :D.
 
 ---
 
@@ -136,20 +138,10 @@ The complete legal terms are available in `LICENSE.md`.
 
 ---
 
-## About
-
-Block Engine is a personal open source game engine project built from the ground up with a focus on **simplicity, control, and learning**.
-
-Thanks for checking out my Engine!
-
----
-
 ## AI Use
 
 Yes i use ai **BUT** i only use it to:
- * Explane bits of code i find undocumented or poorly documented
+ * Explain bits of code i find undocumented or poorly documented
  * To make comments because it's faster than me
- * to read walls of errors in compile time to tell me where they happend then **i fix them**
-
-
+ * to read walls of errors in compile time to tell me where they happened then **i fix them**
 
