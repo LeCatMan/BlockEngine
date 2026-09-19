@@ -18,6 +18,7 @@ void FrameBufferSizeCallback(GLFWwindow *Bwindow, int WindowWidth, int WindowHei
     glViewport(0, 0, WindowWidth, WindowHeight);
 }
 
+
 // Initialize the rendering engine with default settings.
 BlockResult InitializeWindow(int WindowWidth, int WindowHeight, const char *WindowTitle, bool VSync)
 {
@@ -147,6 +148,7 @@ BlockResult BackGroundColor(Color color)
     }
 }
 
+
 // Checks the close flag of the specified window.
 BlockResult WindowShouldClose()
 {
@@ -175,6 +177,7 @@ BlockResult WindowShouldClose()
 
 }
 
+
 // process rendering events.
 void UpdateWindow()
 {
@@ -186,10 +189,6 @@ void UpdateWindow()
     }
     glfwSwapBuffers(Bwindow); // Swaps the front and back buffers of the specified window.
 }
-
-
-
-
 
 
 // ########################
@@ -418,8 +417,8 @@ const unsigned int SquareIndices[6] = {
 // |       Shader2D       |
 // ========================
 
-// Create a fragment and vertex shader with custom shader code.
-Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
+
+void Shader2D::CreateShader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 {
     vertexshadersource = GetFileText(VertexShaderSourcePath);
 
@@ -471,6 +470,60 @@ Shader2D::Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
     }
 }
 
+
+void Shader2D::CreateEmbeddedShader2D(char *VertexShaderSource, char *FragmentShaderSource)
+{
+    vertexshadersource = VertexShaderSource;
+
+    if(!vertexshadersource)
+    {
+        error("Invalid Source (VertexShaderSource)");
+        return;
+    }
+
+    VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
+    glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
+    glCompileShader(VertexShader);
+    free(vertexshadersource);
+    vertexshadersource = nullptr;
+
+    int success;
+    char infoLog[512];
+
+    glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
+
+    if (!success)
+    {
+        glGetShaderInfoLog(VertexShader, 512, NULL, infoLog);
+        error("Vertex shader compilation failed: %s", infoLog);
+        return;
+    }
+
+    vertexshadersource = FragmentShaderSource;
+
+    if(!vertexshadersource)
+    {
+        error("Invalid Source (FragmentShaderSource)");
+        return;
+    }
+
+    FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(FragmentShader, 1, &fragmentshadersource, NULL);
+    glCompileShader(FragmentShader);
+    free(fragmentshadersource);
+    fragmentshadersource = nullptr;
+
+    glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
+
+    if (!success)
+    {
+        glGetShaderInfoLog(FragmentShader, 512, NULL, infoLog);
+        error("Fragment shader compilation failed: %s", infoLog);
+        return;
+    }
+}
+
+
 Shader2D::~Shader2D()
 {};
 
@@ -479,12 +532,12 @@ Shader2D::~Shader2D()
 // |         VAO          |
 // ========================
 
-// Creates vertex array object.
 void CreateVAO(unsigned int *VAO)
 {
     glGenVertexArrays(1, VAO);
     glBindVertexArray(*VAO);
 }
+
 
 void DestroyVAO(unsigned int VAO)
 {
@@ -496,42 +549,42 @@ void DestroyVAO(unsigned int VAO)
 // |         VBO          |
 // ========================
 
-// Creates vertex buffer object.
-void CreateVBO(const float *Vertices, size_t Size, unsigned int *VBO, bool PerVertexColor, bool texture)
+
+void CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bool PerVertexColor, bool texture, size_t Stride, Color BorderColor)
 {
-    size_t stride =
-        PerVertexColor && texture ? 8 * sizeof(float)
-        : PerVertexColor ? 6 * sizeof(float)
-        : texture          ? 5 * sizeof(float)
-        : 3 * sizeof(float);
+    if (Stride == 0)
+    {
+        Stride = (3 + (PerVertexColor ? 3 : 0) + (texture ? 2 : 0)) * sizeof(float);
+    }
 
     glGenBuffers(1, VBO);
     glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, Size, Vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, VerticesSize, Vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Stride, (void *)0);
+    glEnableVertexAttribArray(0);
 
     if (PerVertexColor)
     {
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Stride, (void *)(3 * sizeof(float)));
     }
 
     if (texture)
     {
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(PerVertexColor && texture ? 6 * sizeof(float) : 3 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Stride, (void *)((3 + (PerVertexColor ? 3 : 0)) * sizeof(float)));
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        float TBC[4] = {1.0f, 0.0f, 1.0f, 1.0f};// this is the color of the texture
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, TBC);
+        float BC[4] = {BorderColor.r, BorderColor.g, BorderColor.b, BorderColor.a};
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, BC);
     }
-    glEnableVertexAttribArray(0);
 }
+
 
 void DestroyVBO(unsigned int VBO)
 {
@@ -543,13 +596,14 @@ void DestroyVBO(unsigned int VBO)
 // |         EBO          |
 // ========================
 
-// Creates element buffer object.
+
 void CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO)
 {
     glGenBuffers(1, EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, Size, Indices, GL_STATIC_DRAW);
 }
+
 
 void DestroyEBO(unsigned int EBO)
 {
@@ -561,7 +615,7 @@ void DestroyEBO(unsigned int EBO)
 // |    Shader Program    |
 // ========================
 
-// this is were we attach and link things to the program.
+
 void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int FragmentShader)
 {
     *Shader = glCreateProgram();
@@ -584,8 +638,8 @@ void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int
         glGetProgramInfoLog(*Shader, 512, NULL, infoLog);
         printf("Shader linking failed: %s\n", infoLog);
     }
-    
 }
+
 
 void DestroyShader(unsigned int Shader)
 {
@@ -626,6 +680,7 @@ void Texture::LoadTexture(const char *ImagePath, GLint MinifyFilter, GLint Magni
     stbi_image_free(data);
 };
 
+
 //LoadTextureMesh(Color(0.0f, 0.0f, 0.0f, 255.0f), "src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false);
 void Texture::LoadTextureMesh(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
 {
@@ -633,9 +688,10 @@ void Texture::LoadTextureMesh(Color color, const char *VertexShaderPath, const c
     rendering("Loading the texture mesh");
     strcpy(VertexShader, VertexShaderPath);
     strcpy(FragmentShader, FragmentShaderPath);
-    Shader2D Shader(VertexShader, FragmentShader);
+    Shader2D Shader;
+    Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
     CreateVAO(&Texture2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Texture2DVBO, PerVertexColor, true);
+    CreateVBO(Vertices, VerticesSize, &Texture2DVBO, PerVertexColor, true, 0, {0.0f,0.0f,0.0f,255.0f});
     CreateEBO(MeshIndices, MeshIndicesSize, &Texture2DEBO);
     ShaderProgram(&Texture2DShader, Shader.VertexShader, Shader.FragmentShader);
 }
@@ -651,6 +707,7 @@ void Texture::drawtexture2D(size_t ShapeIndicesSize)
     glDrawElements(GL_TRIANGLES, ShapeIndicesSize, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
 
 void Texture::UnloadTexture()
 {
@@ -676,6 +733,7 @@ void Texture::UnloadTexture()
     }
     rendering("Unloaded the texture");
 }
+
 
 Texture::~Texture()
 {
@@ -704,14 +762,29 @@ Texture::~Texture()
 // ========================
 
 
-//Creates the Shapes resources.
-Shape2D::Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor)
+void Shape2D::LoadShape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor)
 {
     strcpy(VertexShader, VertexShaderPath);
     strcpy(FragmentShader, FragmentShaderPath);
-    Shader2D Shader(VertexShader, FragmentShader);
+    Shader2D Shader;
+    Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
     CreateVAO(&Shape2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false);
+    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f});
+    CreateEBO(ShapeIndices, ShapeIndicesSize, &Shape2DEBO);
+    ShaderProgram(&Shape2DShader, Shader.VertexShader, Shader.FragmentShader);
+    glUseProgram(Shape2DShader);
+    glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);
+}
+
+
+void Shape2D::LoadEmbeddedShape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor)
+{
+    strcpy(VertexShader, VertexShaderPath);
+    strcpy(FragmentShader, FragmentShaderPath);
+    Shader2D Shader;
+    Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
+    CreateVAO(&Shape2DVAO);
+    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f});
     CreateEBO(ShapeIndices, ShapeIndicesSize, &Shape2DEBO);
     ShaderProgram(&Shape2DShader, Shader.VertexShader, Shader.FragmentShader);
     glUseProgram(Shape2DShader);
@@ -734,7 +807,16 @@ void Shape2D::DrawShape2D(size_t ShapeIndicesSize)
 }
 
 
-// Destroys the Shapes resources.
+void Shape2D::UnloadShape2D()
+{
+    DestroyShader(Shape2DShader);
+    DestroyVAO(Shape2DVAO);
+    DestroyVBO(Shape2DVBO);
+    DestroyEBO(Shape2DEBO);
+    rendering("Destroyed the Shapes resources");
+}
+
+
 Shape2D::~Shape2D()
 {
     DestroyShader(Shape2DShader);

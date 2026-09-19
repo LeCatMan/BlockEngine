@@ -11,6 +11,28 @@
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
 
 
+/* Texture flags. */
+typedef enum BlockTextureFlags
+{
+// The default behavior for textures. Repeats the texture image.
+BLOCK_TEXTURE_REPEAT = GL_REPEAT,
+
+// Same as GL_REPEAT but mirrors the image with each repeat.
+BLOCK_TEXTURE_REPEAT_MIRRORED = GL_MIRRORED_REPEAT,
+
+// Clamps the coordinates between 0 and 1. The result is that higher coordinates become clamped to the edge, resulting in a stretched edge pattern.
+BLOCK_TEXTURE_CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
+
+//Coordinates outside the range are now given a user-specified border color.
+BLOCK_TEXTURE_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER
+
+} BlockTextureFlags;
+
+
+
+
+
+
 extern GLFWwindow* Bwindow;
 extern const char *TestFragmentShaderSource;
 extern const char *TestVertexShaderSource;
@@ -75,6 +97,7 @@ public:
 // #          2D          #
 // ########################
 
+
 /**
  * Shader2D
  * --------
@@ -92,12 +115,26 @@ private:
     unsigned int FragmentShader;
 public:
 
-    Shader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath);
+    void CreateShader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath);
+
+    void CreateEmbeddedShader2D(char *VertexShaderSource, char *FragmentShaderSource);
+
+    Shader2D() = default;
 
     ~Shader2D();
     friend Shape2D;
     friend Texture;
+
+    Shader2D(const Shader2D&) = delete;
+
+    Shader2D& operator=(const Shader2D&) = delete;
+
+    Shader2D(Shader2D&&) = delete;
+
+    Shader2D& operator=(Shader2D&&) = delete;
+
 };
+
 
 /**
  * Shape2D
@@ -117,7 +154,15 @@ protected:
     unsigned int Shape2DShader;
 public:
 
-    Shape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor);
+    Shape2D() = default;
+
+    void LoadShape2D(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor);
+
+    void LoadEmbeddedShape2D(Color color, const char *VertexShader, const char *FragmentShader, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, bool PerVertexColor);
+
+    void DrawShape2D(size_t ShapeIndicesSize);
+
+    void UnloadShape2D();
 
     ~Shape2D();
 
@@ -128,9 +173,8 @@ public:
     Shape2D(Shape2D&&) = delete;
 
     Shape2D& operator=(Shape2D&&) = delete;
-
-    void DrawShape2D(size_t ShapeIndicesSize);
 };
+
 
 // ========================
 // |        Shapes        |
@@ -148,7 +192,10 @@ public:
 class Triangle : public Shape2D
 {
 public:
-    Triangle(Color color) : Shape2D(
+    Triangle(Color color)
+    {
+        LoadShape2D
+        (
         color,
         "src/Assets/BlockEngine/Shaders/BasicPerVertexVertexShader.vert",
         "src/Assets/BlockEngine/Shaders/BasicPerVertexFragmentShader.frag",
@@ -156,21 +203,14 @@ public:
         sizeof(TrianglePerVertexColor),
         TriangleIndices,
         sizeof(TriangleIndices),
-        true)
-    {
+        true
+        );
+
         rendering("Creating Triangle Resources");
     }
 
     ~Triangle();
 
-    /**
-     * Draw Triangle
-     * -------------
-     * Draws the triangle.
-     *
-     * Example:
-     *     MyTriangle.DrawTriangle();
-     */
     void DrawTriangle()
     {
         DrawShape2D(sizeof(TriangleIndices) / sizeof(TriangleIndices[0]));
@@ -189,7 +229,9 @@ public:
 class Square : public Shape2D
 {
 public:
-    Square(Color color) : Shape2D(
+    Square(Color color)
+    {
+        LoadShape2D(
         color,
         "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert",
         "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag",
@@ -197,31 +239,24 @@ public:
         sizeof(SquareVertices),
         SquareIndices,
         sizeof(SquareIndices),
-        false)
-    {
+        false
+        );
         rendering("Creating Square Resources");
     }
 
-    ~Square();
-
-    /**
-     * Draw Square
-     * -----------
-     * Draws the square.
-     *
-     * Example:
-     *     MySquare.DrawSquare();
-     */
     void DrawSquare()
     {
         DrawShape2D((sizeof(SquareIndices) / sizeof(SquareIndices[0])));
-    }
+    };
+
+    ~Square();
 };
 
 
 // ########################
 // #          3D          #
 // ########################
+
 
 // Common 3D objects
 class Shape3D

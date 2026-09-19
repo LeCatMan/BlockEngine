@@ -22,34 +22,34 @@ typedef enum BlockSoundFlags
 /* Resource Handling & Memory Strategy */
 
 /* Read in small chunks during playback. Saves RAM. Best for long BGM/Music tracks. */
-BLOCK_SOUND_FLAG_STREAM         = 0x00000001, 
+BLOCK_SOUND_FLAG_STREAM         = MA_SOUND_FLAG_STREAM, 
 
 /* Uncompress entire sound into RAM at load time. Instant playback, 0 CPU delay. Best for SFX (clicks, gunshots). */
-BLOCK_SOUND_FLAG_DECODE         = 0x00000002, 
+BLOCK_SOUND_FLAG_DECODE         = MA_SOUND_FLAG_DECODE, 
 
 /* Load sound in the background on another thread so the main game loop doesn't freeze or stutter. */
-BLOCK_SOUND_FLAG_ASYNC          = 0x00000004, 
+BLOCK_SOUND_FLAG_ASYNC          = MA_SOUND_FLAG_ASYNC, 
 
 /* Block/pause execution until background loading completes (used with ASYNC to force game to wait before playing). */
-BLOCK_SOUND_FLAG_WAIT_INIT      = 0x00000008, 
+BLOCK_SOUND_FLAG_WAIT_INIT      = MA_SOUND_FLAG_WAIT_INIT, 
 
 /* For dynamic or generated audio feeds where total time/duration isn't known ahead of time. */
-BLOCK_SOUND_FLAG_UNKNOWN_LENGTH = 0x00000010, 
+BLOCK_SOUND_FLAG_UNKNOWN_LENGTH = MA_SOUND_FLAG_UNKNOWN_LENGTH, 
 
 /* Automatically restart playback from the beginning when it reaches the end. */
-BLOCK_SOUND_FLAG_LOOPING        = 0x00000020, 
+BLOCK_SOUND_FLAG_LOOPING        = MA_SOUND_FLAG_LOOPING, 
 
 
 /* Playback & Audio Pipeline */
 
 /* Load sound into memory silently without plugging it into speakers yet (useful for manual channel routing). */
-BLOCK_SOUND_FLAG_NO_ATTACHMENT  = 0x00001000, 
+BLOCK_SOUND_FLAG_NO_ATTACHMENT  = MA_SOUND_FLAG_NO_DEFAULT_ATTACHMENT, 
 
 /* Lock pitch changes to save CPU (sound pitch/speed cannot be altered dynamically). */
-BLOCK_SOUND_FLAG_NO_PITCH       = 0x00002000, 
+BLOCK_SOUND_FLAG_NO_PITCH       = MA_SOUND_FLAG_NO_PITCH, 
 
 /* Turn off 3D positional audio, distance fade, and stereo panning. Best for 2D UI clicks or master background music. */
-BLOCK_SOUND_FLAG_NO_SPATIAL     = 0x00004000
+BLOCK_SOUND_FLAG_NO_SPATIAL     = MA_SOUND_FLAG_NO_SPATIALIZATION
 
 } BlockSoundFlags;
 
@@ -58,10 +58,6 @@ BLOCK_SOUND_FLAG_NO_SPATIAL     = 0x00004000
 inline BlockSoundFlags operator|(BlockSoundFlags a, BlockSoundFlags b) {
     return static_cast<BlockSoundFlags>(static_cast<int>(a) | static_cast<int>(b));
 }
-
-
-
-
 
 
 class Audio
@@ -109,6 +105,7 @@ public:
 
     BlockResult SetLooping(bool State);
 };
+
 
 // Global Audio System Functions
 
