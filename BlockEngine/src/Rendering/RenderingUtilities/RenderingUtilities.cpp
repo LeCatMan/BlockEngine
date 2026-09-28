@@ -84,6 +84,9 @@ BlockResult InitializeWindow(int WindowWidth, int WindowHeight, const char *Wind
 
     #pragma endregion
     
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     rendering("Rendering engine initialized!");
     rendering("Window initialized!");
     RenderingInitialized = BLOCK_SUCCESS_TRUE;
@@ -205,208 +208,89 @@ void UpdateWindow()
 // The data is kept readable so you can understand
 // and modify the shapes if needed.
 
-const float TrianglePerVertexColor[18] = {
-    // bottom right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      1.0f, 0.0f, 0.0f,
 
-    // bottom left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      0.0f, 1.0f, 0.0f,
+// =========================
+// |       Triangle        |
+// =========================
 
-    // top vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.0f, 0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      0.0f, 0.0f, 1.0f
+// Position + Color
+const float TriangleVerticesColor[21] = {
+    // Position              // Color
+    //  x      y      z       r      g      b      a
+       0.5f, -0.5f, 0.0f,    1.0f,  0.0f,  0.0f, 1.0f,   // Bottom right
+      -0.5f, -0.5f, 0.0f,    0.0f,  1.0f,  0.0f, 1.0f,   // Bottom left
+       0.0f,  0.5f, 0.0f,    0.0f,  0.0f,  1.0f, 1.0f    // Top
 };
 
-const float TrianglePosColorUV[24] = {
-    // bottom right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 1.0f, 0.0f, 0.0f
-   // uv
-   //|  x  |  y  |
-    , 0.0f, 0.0f,
-
-
-   // bottom left vertex
-
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 0.0f, 1.0f, 0.0f
-   // uv
-   //|  x  |  y  |
-    , 1.0f, 0.0f,
-
-
-    // top vertex
-
-   // positions               
-   //  x  |  y  |  z  |
-     0.0f,  0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 0.0f, 0.0f, 1.0f
-   // uv
-   //|  x  |  y  |
-    , 0.5f, 1.0f,
+// Position + Color + UV
+const float TriangleVerticesColorUV[27] = {
+    // Position              // Color              // UV
+    //  x      y      z       r      g      b      a       u      v
+       0.5f, -0.5f, 0.0f,    1.0f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,   // Bottom right
+      -0.5f, -0.5f, 0.0f,    0.0f,  1.0f,  0.0f, 1.0f,   1.0f, 0.0f,   // Bottom left
+       0.0f,  0.5f, 0.0f,    0.0f,  0.0f,  1.0f, 1.0f,   0.5f, 1.0f    // Top
 };
 
+// Position only
 const float TriangleVertices[9] = {
-    // bottom right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f,
-
-    // bottom left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f,
-
-    // top vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.0f, 0.5f, 0.0f,
+    //  x      y      z
+       0.5f, -0.5f, 0.0f,   // Bottom right
+      -0.5f, -0.5f, 0.0f,   // Bottom left
+       0.0f,  0.5f, 0.0f    // Top
 };
 
 const unsigned int TriangleIndices[3] = {
     0, 1, 2
 };
 
-const float SquarePerVertexColor[24] = {
-    // bottom left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      1.0f, 0.0f, 0.0f,
 
-    // bottom right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      0.0f, 1.0f, 0.0f,
+// =========================
+// |        Square         |
+// =========================
 
-    // top left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f,  0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      0.0f, 0.0f, 1.0f,
-
-    // top right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f,  0.5f, 0.0f,
-   // colors
-   //|  r  |  g  |  b  |
-      1.0f, 1.0f, 0.0f
+// Position + Color
+const float SquareVerticesColor[28] = {
+    // Position              // Color
+    //  x      y      z       r      g      b      a
+      -0.5f, -0.5f, 0.0f,    1.0f,  0.0f,  0.0f, 1.0f,   // Bottom left
+       0.5f, -0.5f, 0.0f,    0.0f,  1.0f,  0.0f, 1.0f,   // Bottom right
+      -0.5f,  0.5f, 0.0f,    0.0f,  0.0f,  1.0f, 1.0f,   // Top left
+       0.5f,  0.5f, 0.0f,    1.0f,  1.0f,  0.0f, 1.0f    // Top right
 };
 
-const float SquarePosColorUV[32] = {
-    // bottom left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 1.0f, 0.0f, 0.0f
-   // uv
-   //|  x  |  y  |
-    , 0.0f, 0.0f,
-
-
-    // bottom right vertex
-
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 0.0f, 1.0f, 0.0f
-   // uv
-   //|  x  |  y  |
-    , 1.0f, 0.0f,
-
-
-    // top left vertex
-
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f,  0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 0.0f, 0.0f, 1.0f
-   // uv
-   //|  x  |  y  |
-    , 0.0f, 1.0f,
-
-
-    // top right vertex
-
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f,  0.5f, 0.0f
-   // colors
-   //|  r  |  g  |  b  |
-    , 1.0f, 1.0f, 0.0f
-   // uv
-   //|  x  |  y  |
-    , 1.0f, 1.0f,
+// Position + Color + UV
+const float SquareVerticesColorUV[36] = {
+    // Position              // Color              // UV
+    //  x      y      z       r      g      b      a       u      v
+      -0.5f, -0.5f, 0.0f,    1.0f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,   // Bottom left
+       0.5f, -0.5f, 0.0f,    0.0f,  1.0f,  0.0f, 1.0f,   1.0f, 0.0f,   // Bottom right
+      -0.5f,  0.5f, 0.0f,    0.0f,  0.0f,  1.0f, 1.0f,   0.0f, 1.0f,   // Top left
+       0.5f,  0.5f, 0.0f,    1.0f,  1.0f,  0.0f, 1.0f,   1.0f, 1.0f    // Top right
 };
 
+// Position + UV
+const float SquareVerticesUV[20] = {
+    // Position              // UV
+    //  x      y      z       u      v
+      -0.5f, -0.5f, 0.0f,    0.0f, 0.0f,   // Bottom left
+       0.5f, -0.5f, 0.0f,    1.0f, 0.0f,   // Bottom right
+      -0.5f,  0.5f, 0.0f,    0.0f, 1.0f,   // Top left
+       0.5f,  0.5f, 0.0f,    1.0f, 1.0f    // Top right
+};
+
+// Position only
 const float SquareVertices[12] = {
-    // bottom left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f, -0.5f, 0.0f,
-
-    // bottom right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f, -0.5f, 0.0f,
-
-    // top left vertex
-   // positions               
-   //  x  |  y  |  z  |
-    -0.5f,  0.5f, 0.0f,
-
-    // top right vertex
-   // positions               
-   //  x  |  y  |  z  |
-     0.5f,  0.5f, 0.0f
+    //  x      y      z
+      -0.5f, -0.5f, 0.0f,   // Bottom left
+       0.5f, -0.5f, 0.0f,   // Bottom right
+      -0.5f,  0.5f, 0.0f,   // Top left
+       0.5f,  0.5f, 0.0f    // Top right
 };
 
 const unsigned int SquareIndices[6] = {
     0, 1, 2,
     1, 3, 2
 };
-
-
-
-
 
 // ########################
 // #      Rendering       #
@@ -420,6 +304,8 @@ const unsigned int SquareIndices[6] = {
 
 void Shader2D::CreateShader2D(char *VertexShaderSourcePath, char *FragmentShaderSourcePath)
 {
+    #pragma region Vertex Shader
+
     vertexshadersource = GetFileText(VertexShaderSourcePath);
 
     if(!vertexshadersource)
@@ -446,6 +332,10 @@ void Shader2D::CreateShader2D(char *VertexShaderSourcePath, char *FragmentShader
         return;
     }
 
+    #pragma endregion
+
+    #pragma region Fragment Shader
+
     fragmentshadersource = GetFileText(FragmentShaderSourcePath);
 
     if(!fragmentshadersource)
@@ -461,13 +351,15 @@ void Shader2D::CreateShader2D(char *VertexShaderSourcePath, char *FragmentShader
     fragmentshadersource = nullptr;
 
     glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &success); // checks if the shader compiled successfully.
-
+    
     if (!success)
     {
         glGetShaderInfoLog(FragmentShader, 512, NULL, infoLog);
         error("Fragment shader compilation failed: %s", infoLog);
         return;
     }
+
+    #pragma endregion
 }
 
 
@@ -549,12 +441,14 @@ void DestroyVAO(unsigned int VAO)
 // |         VBO          |
 // ========================
 
-
-void CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bool PerVertexColor, bool texture, size_t Stride, Color BorderColor)
+/**
+ * @param Stride you can put it to 0 to auto stride.
+ */
+void CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bool PerVertexColor, bool texture, size_t Stride, Color BorderColor, bool RGBA)
 {
     if (Stride == 0)
     {
-        Stride = (3 + (PerVertexColor ? 3 : 0) + (texture ? 2 : 0)) * sizeof(float);
+        Stride = (3 + (PerVertexColor ? 4 : 0) + (texture ? 2 : 0)) * sizeof(float);
     }
 
     glGenBuffers(1, VBO);
@@ -567,13 +461,24 @@ void CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bo
     if (PerVertexColor)
     {
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Stride, (void *)(3 * sizeof(float)));
+        if (RGBA)
+        {
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Stride, (void *)(3 * sizeof(float)));
+        }
+        else
+        {
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Stride, (void *)(3 * sizeof(float)));
+        }
+    }
+    else
+    {
+        glVertexAttrib4f(1, 1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     if (texture)
     {
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Stride, (void *)((3 + (PerVertexColor ? 3 : 0)) * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Stride, (void *)((3 + (PerVertexColor ? 4 : 0)) * sizeof(float)));
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -652,37 +557,115 @@ void DestroyShader(unsigned int Shader)
 // ========================
 
 
-void Texture::LoadTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter)
+/**
+ * 
+ * @param ImagePath The path to the image relative to the program.
+ * @param MinifyFilter The filtering method used when the image is displayed smaller.
+ * @param MagnifyingFilter The filtering method used when the image is displayed larger.
+ * @param Border Controls how the texture behaves outside its normal UV range.
+ * @param RGBA When it's true the image will use RGBA when its false it will use RGB.
+*/
+void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
 {
-    rendering("Loading texture");
+    stbi_set_flip_vertically_on_load(true);
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load(ImagePath, &width, &height, &nrChannels, RGBA ? 4 : 3);
+
+    if (!data)
+    {
+        error("Failed to Load texture!");
+        error("STBI reason: %s", stbi_failure_reason());
+        return;
+    }
+
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Border);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Border);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinifyFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagnifyingFilter);
 
-    // load and generate the texture
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(ImagePath, &width, &height, &nrChannels, 4);
-
-    if (data)
+    if (RGBA)
+    {    
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            error("Failed to Load texture!");
+        }
+        stbi_image_free(data);
+    }
+    else 
     {
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            error("Failed to Load texture!");
+        }
+        stbi_image_free(data);
+    }
+
+    rendering("Loaded texture");
+};
+
+
+/**
+ * 
+ * @param ImageData The Data of the image.
+ * @param ImageSize Just use sizeof(ImageData). 
+ * @param MinifyFilter The filtering method used when the image is displayed smaller.
+ * @param MagnifyingFilter The filtering method used when the image is displayed larger.
+ * @param Border Controls how the texture behaves outside its normal UV range.
+ * @param RGBA When it's true the image will use RGBA when its false it will use RGB.
+*/
+void Texture2D::LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
+{
+    stbi_set_flip_vertically_on_load(true);
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load_from_memory((const stbi_uc*)ImageData, ImageSize, &width, &height, &nrChannels, RGBA ? 4 : 3);
+
+    if (!data)
+    {
+        error("Failed to Load texture!");
+        error("STBI reason: %s", stbi_failure_reason());
+        return;
+    }
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Border);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Border);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, MinifyFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, MagnifyingFilter);
+
+    if (RGBA)
+    {    
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        stbi_image_free(data);
     }
-    else
+    else 
     {
-        error("Failed to generate texture!");
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        stbi_image_free(data);
     }
 
-    stbi_image_free(data);
+    rendering("Loaded texture");
 };
 
 
 //LoadTextureMesh(Color(0.0f, 0.0f, 0.0f, 255.0f), "src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false);
-void Texture::LoadTextureMesh(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
+void Texture2D::LoadTextureMesh(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
 {
     SizeOfMeshIndices = MeshIndicesSize / MeshIndicesArraySize;
     rendering("Loading the texture mesh");
@@ -691,15 +674,16 @@ void Texture::LoadTextureMesh(Color color, const char *VertexShaderPath, const c
     Shader2D Shader;
     Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
     CreateVAO(&Texture2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Texture2DVBO, PerVertexColor, true, 0, {0.0f,0.0f,0.0f,255.0f});
+    CreateVBO(Vertices, VerticesSize, &Texture2DVBO, PerVertexColor, true, 0, {255.0f, 0.0f, 255.0f, 255.0f}, true);
     CreateEBO(MeshIndices, MeshIndicesSize, &Texture2DEBO);
     ShaderProgram(&Texture2DShader, Shader.VertexShader, Shader.FragmentShader);
 }
 
 
-void Texture::drawtexture2D(size_t ShapeIndicesSize)
+void Texture2D::drawtexture2D(size_t ShapeIndicesSize)
 {
     glUseProgram(Texture2DShader);
+    glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(Texture2DShader, "texture1"), 0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(Texture2DVAO);
@@ -709,7 +693,7 @@ void Texture::drawtexture2D(size_t ShapeIndicesSize)
 }
 
 
-void Texture::UnloadTexture()
+void Texture2D::UnloadTexture()
 {
     if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
     {
@@ -735,7 +719,7 @@ void Texture::UnloadTexture()
 }
 
 
-Texture::~Texture()
+Texture2D::~Texture2D()
 {
     if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
     {
@@ -769,11 +753,11 @@ void Shape2D::LoadShape2D(Color color, const char *VertexShaderPath, const char 
     Shader2D Shader;
     Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
     CreateVAO(&Shape2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f});
+    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f}, true);
     CreateEBO(ShapeIndices, ShapeIndicesSize, &Shape2DEBO);
     ShaderProgram(&Shape2DShader, Shader.VertexShader, Shader.FragmentShader);
     glUseProgram(Shape2DShader);
-    glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);
+    if (!PerVertexColor){glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);}
 }
 
 
@@ -784,7 +768,7 @@ void Shape2D::LoadEmbeddedShape2D(Color color, const char *VertexShaderPath, con
     Shader2D Shader;
     Shader.CreateShader2D((char*)VertexShaderPath, (char*)FragmentShaderPath);
     CreateVAO(&Shape2DVAO);
-    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f});
+    CreateVBO(Vertices, VerticesSize, &Shape2DVBO, PerVertexColor, false, 0, {0.0f,0.0f,0.0f,255.0f}, true);
     CreateEBO(ShapeIndices, ShapeIndicesSize, &Shape2DEBO);
     ShaderProgram(&Shape2DShader, Shader.VertexShader, Shader.FragmentShader);
     glUseProgram(Shape2DShader);

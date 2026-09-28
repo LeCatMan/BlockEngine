@@ -68,6 +68,7 @@ private:
     ma_decoder decoder;
     BlockResult SoundLoaded = BLOCK_SUCCESS_FALSE;
     const char *FileName;
+    bool EmbeddedSound = false;
 
 public:
     /* Constructors, Destructor & Lifetime Control */
@@ -80,7 +81,7 @@ public:
     /* Loading & Unloading */
 
     BlockResult LoadSound(const char* Path, BlockSoundFlags Flag);
-    BlockResult LoadEmbeddedSound(const unsigned char* pData, size_t dataSize);
+    BlockResult LoadEmbeddedSound(const unsigned char* Data, size_t dataSize);
     BlockResult UnloadSound();
 
     /* Playback Control */

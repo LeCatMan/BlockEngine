@@ -12,7 +12,6 @@ static std::vector<ma_sound*> ActiveOverlappingSounds;
 // Initialize the audio engine.
 BlockResult InitializeAudioEngine(float volume)
 {
-
     #pragma region Initialize audio Engine
     if (ma_engine_init(NULL, &Engine) != MA_SUCCESS)
     {
@@ -41,7 +40,6 @@ BlockResult InitializeAudioEngine(float volume)
 // Global system update function called once per frame.
 void UpdateAudio()
 {
-
     // get through every cloned sound if it's there then see if it's playing if it's not playing delete it from memory.
     for (auto IndexSound = ActiveOverlappingSounds.begin(); IndexSound != ActiveOverlappingSounds.end(); )
     {
@@ -62,10 +60,8 @@ void UpdateAudio()
 }
 
 
-// Shutdown audio engine.
 BlockResult AudioShutdown()
 {
-
     if (Initialized)
     {
         // Clean up any remaining overlapping sounds safely
@@ -94,10 +90,8 @@ BlockResult AudioShutdown()
 }
 
 
-// Load the sound.
 BlockResult Audio::LoadSound(const char *Path, BlockSoundFlags Flag)
 {
-
     if (Initialized == BLOCK_SUCCESS_TRUE)
     {
         if (SoundLoaded == BLOCK_SUCCESS_FALSE)
@@ -107,7 +101,7 @@ BlockResult Audio::LoadSound(const char *Path, BlockSoundFlags Flag)
             {
                 error("Failed to load sound!");
                 SoundLoaded = BLOCK_SUCCESS_FALSE;
-                return BLOCK_SUCCESS_FALSE;
+                return BLOCK_FAILURE;
             }
             #pragma endregion
             
@@ -118,19 +112,20 @@ BlockResult Audio::LoadSound(const char *Path, BlockSoundFlags Flag)
             FileName = FileName ? FileName + 1 : Path;
 
             audio("Loaded Sound : %s!", FileName);
+            EmbeddedSound = false;
             return BLOCK_SUCCESS_TRUE;
             #pragma endregion
         }
         else
         {
             warning("Cannot load sound because the sound is already loaded!");
-            return BLOCK_SUCCESS_FALSE;
+            return BLOCK_FAILURE;
         }
     }
     else
     {
         warning("Cannot load sound because the engine is not loaded!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
 
 }
@@ -168,19 +163,21 @@ BlockResult Audio::LoadEmbeddedSound(const unsigned char* Data, size_t DataSize)
             }
 
             SoundLoaded = BLOCK_SUCCESS_TRUE;
+            EmbeddedSound = true;
             return BLOCK_SUCCESS_TRUE;
             #pragma endregion
+        
         }
         else
         {
             warning("Cannot load sound because the sound is already loaded!");
-            return BLOCK_SUCCESS_FALSE;
+            return BLOCK_FAILURE;
         }
     }
     else
     {
         warning("Cannot load sound because the engine is not loaded!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
 }
 
@@ -220,6 +217,7 @@ BlockResult Audio::PlayOverlappingSound()
         return BLOCK_FAILURE;
     }
 
+    #pragma region Allocate space for the sound
     ma_sound* clonedSound;
     try
     {
@@ -228,9 +226,11 @@ BlockResult Audio::PlayOverlappingSound()
     catch (const std::bad_alloc&)
     {
         error("Cannot allocate memory for cloned overlapping sounds!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
+    #pragma endregion
 
+    #pragma region Copy the sound into the Allocated Memory
     if (ma_sound_init_copy(&Engine, &sound, BLOCK_SOUND_FLAG_DECODE, NULL, clonedSound) == MA_SUCCESS)
     {
         if (ma_sound_start(clonedSound) != MA_SUCCESS)
@@ -238,7 +238,7 @@ BlockResult Audio::PlayOverlappingSound()
             warning("Couldn't start overlapping sound!");
             ma_sound_uninit(clonedSound);
             delete clonedSound;
-            return BLOCK_SUCCESS_FALSE;
+            return BLOCK_FAILURE;
         }
         ActiveOverlappingSounds.push_back(clonedSound); // Pushes to the hidden backend tracker
         return BLOCK_SUCCESS_TRUE;
@@ -247,8 +247,9 @@ BlockResult Audio::PlayOverlappingSound()
     {
         warning("Couldn't copy sound into RAM!");
         delete clonedSound;
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
+    #pragma endregion
 }
 
 
@@ -257,11 +258,6 @@ BlockResult Audio::PlayOverlappingSound()
 // ########################
 
 
-/**
- * Checks whether the sound is playing.
- *
- * @return true if the sound is playing; otherwise false.
- */
 BlockResult Audio::IsSoundPlaying()
 {
     if (!SoundLoaded)
@@ -281,11 +277,6 @@ BlockResult Audio::IsSoundPlaying()
 }
 
 
-/**
- * Checks whether the sound has reached its end.
- *
- * @return true if the sound has finished; otherwise false.
- */
 BlockResult Audio::IsSoundFinished()
 {
     if (!SoundLoaded)
@@ -320,7 +311,7 @@ BlockResult Audio::StopSound()
     else
     {
         error("Failed to stop sound!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
 }
 
@@ -341,7 +332,7 @@ BlockResult Audio::StartSound()
     else
     {
         error("Failed to continue sound!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
 }
 
@@ -360,11 +351,6 @@ BlockResult Audio::SetLooping(bool State)
 }
 
 
-/**
- * Checks whether the sound is looping.
- *
- * @return true if the sound is Looping; otherwise false.
- */
 BlockResult Audio::IsSoundLooping()
 {
     if (!SoundLoaded)
@@ -420,8 +406,6 @@ BlockResult Audio::Fade(float VolumeBegin, float VolumeEnd, int FadeLengthInMill
  *
  * Can be used for both 2D and 3D audio.
  * For 2D audio, only the X and Y components are used.
- *
- * @param XYZ Position of the sound.
  */
 BlockResult Audio::SetSoundPosition(FloatVector3 XYZ)
 {
@@ -439,7 +423,7 @@ BlockResult Audio::SetSoundPosition(FloatVector3 XYZ)
  * Gets the sound's position using a FloatVector3.
  *
  * Can be used for both 2D and 3D audio.
- * For 2D audio, only the X and Y components are used.
+ * For 2D audio, only the X and Y components are returned.
  *
  */
 FloatVector3 Audio::GetSoundPosition()
@@ -458,13 +442,18 @@ BlockResult Audio::UnloadSound()
 {
     if (Initialized == BLOCK_SUCCESS_TRUE)
     {
-    if (!SoundLoaded)
-    {
-        warning("The sound is unloaded cannot stop sound.");
-        return BLOCK_FAILURE;
-    }
+        if (!SoundLoaded)
+        {
+            warning("The sound is unloaded cannot stop sound.");
+            return BLOCK_FAILURE;
+        }
 
         ma_sound_uninit(&sound);
+        if (EmbeddedSound)
+        {
+            ma_decoder_uninit(&decoder);
+            EmbeddedSound = false;
+        }
         SoundLoaded = BLOCK_SUCCESS_FALSE;
 
         audio("Unloaded sound!");
@@ -473,7 +462,7 @@ BlockResult Audio::UnloadSound()
     else
     {
         warning("Cannot unload sound because the audio engine is not initialized!");
-        return BLOCK_SUCCESS_FALSE;
+        return BLOCK_FAILURE;
     }
 }
 
@@ -488,6 +477,10 @@ Audio::~Audio()
         }
 
         ma_sound_uninit(&sound);
+        if (EmbeddedSound)
+        {
+            ma_decoder_uninit(&decoder);
+        }
         SoundLoaded = BLOCK_SUCCESS_FALSE;
 
         audio("Unloaded Sound!");

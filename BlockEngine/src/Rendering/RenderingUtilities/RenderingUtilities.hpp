@@ -24,7 +24,15 @@ BLOCK_TEXTURE_REPEAT_MIRRORED = GL_MIRRORED_REPEAT,
 BLOCK_TEXTURE_CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
 
 //Coordinates outside the range are now given a user-specified border color.
-BLOCK_TEXTURE_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER
+BLOCK_TEXTURE_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
+
+BLOCK_TEXTURE_MIN_FILTER = GL_TEXTURE_MIN_FILTER,
+
+BLOCK_TEXTURE_MAG_FILTER = GL_TEXTURE_MAG_FILTER,
+
+BLOCK_NEAREST = GL_NEAREST,
+
+BLOCK_LINEAR = GL_LINEAR
 
 } BlockTextureFlags;
 
@@ -38,17 +46,25 @@ extern const char *TestFragmentShaderSource;
 extern const char *TestVertexShaderSource;
 class Shape2D;
 
-// square
-extern const float SquarePerVertexColor[24];
-extern const float SquarePosColorUV[32];
+// =========================
+// | External declarations |
+// =========================
+
+// Square
+
+extern const float SquareVerticesColor[28];
+extern const float SquareVerticesColorUV[36];
+extern const float SquareVerticesUV[20];
 extern const float SquareVertices[12];
 extern const unsigned int SquareIndices[6];
 
 // Triangle
-extern const float TrianglePerVertexColor[18];
-extern const float TrianglePosColorUV[24];
+
+extern const float TriangleVerticesColor[21];
+extern const float TriangleVerticesColorUV[27];
 extern const float TriangleVertices[9];
 extern const unsigned int TriangleIndices[3];
+
 
 struct Color
 {
@@ -67,7 +83,7 @@ struct Color
 };
 
 
-class Texture
+class Texture2D
 {
 private:
     unsigned int texture;
@@ -80,7 +96,7 @@ private:
     size_t SizeOfMeshIndices;
 
 public:
-    void LoadTexture(const char *ImagePath, GLint MinifyFilter, GLint MagnifyingFilter);
+    void LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
     // plz don't use this its just some bullshit i need
     void drawtexture2D(size_t ShapeIndicesSize);
 
@@ -88,9 +104,11 @@ public:
     {
         drawtexture2D(SizeOfMeshIndices);
     }
-    void LoadTextureMesh(Color color, const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
+    
+    void LoadTextureMesh(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
+    void LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
     void UnloadTexture();
-    ~Texture();
+    ~Texture2D();
 };
 
 // ########################
@@ -123,7 +141,7 @@ public:
 
     ~Shader2D();
     friend Shape2D;
-    friend Texture;
+    friend Texture2D;
 
     Shader2D(const Shader2D&) = delete;
 
@@ -199,8 +217,8 @@ public:
         color,
         "src/Assets/BlockEngine/Shaders/BasicPerVertexVertexShader.vert",
         "src/Assets/BlockEngine/Shaders/BasicPerVertexFragmentShader.frag",
-        TrianglePerVertexColor,
-        sizeof(TrianglePerVertexColor),
+        TriangleVerticesColor,
+        sizeof(TriangleVerticesColor),
         TriangleIndices,
         sizeof(TriangleIndices),
         true

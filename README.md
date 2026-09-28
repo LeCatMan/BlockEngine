@@ -12,7 +12,7 @@ Block Engine provides a simple interface for building games through **its C and 
 
 ## Preview
 
-<img width="800" height="632" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.68Preview.png" />
+<img width="800" height="600" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.7Preview.gif" />
 
 ---
 
@@ -21,6 +21,7 @@ Block Engine provides a simple interface for building games through **its C and 
 * Window creation and management
 * OpenGL rendering
 * Basic shape rendering
+* Texture rendering and alpha blending
 * Keyboard input and key events
 * Audio
 * Logging and debugging utilities
@@ -43,7 +44,7 @@ Block Engine is made for developers who want useful abstractions without being l
 
 ## Development Status
 
-Block Engine is currently in **Alpha 0.69** and is actively being developed.
+Block Engine is currently in **Alpha 0.7** and is actively being developed.
 
 It is an early stage project so the APIs and features may change, break, or be replaced as development continues.
 
