@@ -44,7 +44,7 @@ Block Engine is made for developers who want useful abstractions without being l
 
 ## Development Status
 
-Block Engine is currently in **Alpha 0.7** and is actively being developed.
+Block Engine is currently in **Alpha 0.73** and is actively being developed.
 
 It is an early stage project so the APIs and features may change, break, or be replaced as development continues.
 

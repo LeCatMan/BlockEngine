@@ -1,5 +1,14 @@
+
 #!/bin/bash
 
-cd Examples
-make -f Example.mk && make -f Example.mk run
+cd Examples || exit 1
+
+if [ $# -eq 0 ]; then
+    make -f Example.mk run
+elif [ "$1" = "windows" ]; then
+    make -f Example.mk run-windows
+else
+    make -f Example.mk "$@"
+fi
+
 cd ..

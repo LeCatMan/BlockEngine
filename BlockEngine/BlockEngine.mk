@@ -45,4 +45,4 @@ BlockEngineDEBUG.exe: $(SRC) external/glad/src/glad.c external/glfw-3.5.1/build-
 	-o $@
 
 clean:
-	rm -f BlockEngine BlockEngine.exe BlockEngineDEBUG.exe $(OBJ) external/glad/src/glad.o
+	rm -f BlockEngineDEBUG.exe $(OBJ) external/glad/src/glad.o
