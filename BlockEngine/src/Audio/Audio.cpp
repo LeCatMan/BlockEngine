@@ -108,8 +108,13 @@ BlockResult Audio::LoadSound(const char *Path, BlockSoundFlags Flag)
             #pragma region Print the name
             SoundLoaded = BLOCK_SUCCESS_TRUE;
 
-            FileName = strrchr(Path, '/');
-            FileName = FileName ? FileName + 1 : Path;
+            const char *FileName = "(unknown)";
+
+            if (Path != NULL)
+            {
+                const char *Slash = strrchr(Path, '/');
+                FileName = Slash ? Slash + 1 : Path;
+            }
 
             audio("Loaded Sound : %s!", FileName);
             EmbeddedSound = false;

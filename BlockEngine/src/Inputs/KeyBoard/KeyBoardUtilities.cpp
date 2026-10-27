@@ -1,29 +1,33 @@
+class BlockWindow;
 #include "KeyBoardUtilities.hpp"
-#include "../../Rendering/RenderingUtilities/RenderingUtilities.hpp"
 #include <stdio.h>
+#include "../Inputs.hpp"
 
-int ExitKey;
+
 static bool previousState[GLFW_KEY_LAST + 1] = {};
 static bool currentState[GLFW_KEY_LAST + 1] = {};
 
 
-void InitializeInput()
+void InitializeInput(BlockWindow *Window)
 {
-    glfwSetInputMode(Bwindow, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(Window->Window, GLFW_STICKY_KEYS, GLFW_TRUE);
 }
 
-void UpdateInput()
+void UpdateInput(BlockWindow *Window)
 {
     glfwPollEvents();
     for (int key = 0; key <= GLFW_KEY_LAST; ++key)
     {
         previousState[key] = currentState[key];
-        currentState[key] = glfwGetKey(Bwindow, key) == GLFW_PRESS;
+        currentState[key] = glfwGetKey(Window->Window, key) == GLFW_PRESS;
     }
 }
 
-// check if a key event was activated
-// you can use the event to specify the action (Press,Release,repeat)
+/** check if a key event was activated
+ * BLOCK_PRESS if the key was pressed
+ * BLOCK_RELEASE if the key was released
+ * BLOCK_REPEAT if the key was held
+*/
 bool KeyEvent(int key, int event)
 {
     if (key < 0 || key > GLFW_KEY_LAST)
@@ -47,10 +51,4 @@ bool KeyEvent(int key, int event)
     }
 
     return triggered;
-}
-
-// if the key chosen was activated it will close the window.
-void SetExitKey(int key)
-{
-    ExitKey = key;
 }

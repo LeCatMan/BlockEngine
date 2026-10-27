@@ -1,8 +1,9 @@
 #pragma once
 
-extern int ExitKey;
+class BlockWindow;
+
+#include "../../Rendering/RenderingUtilities.hpp"
 
 bool KeyEvent(int key, int event);
-void SetExitKey(int key);
-void InitializeInput();
-void UpdateInput();
+void InitializeInput(BlockWindow *Window);
+void UpdateInput(BlockWindow *Window);

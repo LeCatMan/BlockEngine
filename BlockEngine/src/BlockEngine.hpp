@@ -1,5 +1,5 @@
 #pragma once
-#include "Rendering/RenderingUtilities/RenderingUtilities.hpp"
+#include "Rendering/RenderingUtilities.hpp"
 #include "Debugger/Debugger.hpp"
 #include "Audio/Audio.hpp"
 #include "Inputs/Inputs.hpp"
@@ -24,16 +24,14 @@
  * Example:
  *     InitializeBlockEngine(800, 600, "Test", BLOCK_KEY_ESCAPE);
  */
-inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char *WindowTitle, int ExitKey, float volume , bool VSync)
+inline void InitializeBlockEngine(float Volume)
 {
     this_is_a_very_long_phrase_that_hopefully_is_not_in_any_dictionary = "Guess:)";
     LoggerInit();
     GetCurrentRunningPath();
     info("Launching BlockEngine");
-    InitializeWindow(WindowWidth,WindowHeight, WindowTitle, VSync);
-    InitializeInput();
-    SetExitKey(ExitKey);
-    InitializeAudioEngine(volume);
+    InitializeRenderingEngine();
+    InitializeAudioEngine(Volume);
 }
 
 /**
@@ -44,12 +42,9 @@ inline void InitializeBlockEngine(int WindowWidth, int WindowHeight, const char 
 inline void BlockEngineShutdown()
 {
     info("Closing Program");
-
     RenderingShutdown();
     AudioShutdown();
-
     info("Closed Program");
-
     LoggerShutdown();
 }
 
