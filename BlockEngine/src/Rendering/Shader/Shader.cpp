@@ -1,8 +1,7 @@
 #include "Shader.hpp"
-#include "../../Debugger/Logger/Logger.hpp"
 #include "../../../external/glad/include/glad/glad.h"
-#include "../../Debugger/Utilities/Utilities.hpp"
 #include <string.h>
+
 
 BlockResult Shader2D::CreateShader2D(const char *VertexShaderSourcePath, const char *FragmentShaderSourcePath)
 {

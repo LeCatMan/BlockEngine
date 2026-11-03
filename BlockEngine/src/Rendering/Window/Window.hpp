@@ -1,11 +1,15 @@
 #pragma once
 
-#include "../../Inputs/Inputs.hpp"
-#include "../Color/Color.hpp"
-#include "../../Debugger/Utilities/Utilities.hpp"
-// glad + glfw
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
+#include "../../Debugger/Logger/Logger.hpp"
+#include "../../Audio/Audio.hpp"
+#include "../../Debugger/Utilities/Utilities.hpp"
+#include "../../Inputs/Inputs.hpp"
+#include "../RenderingEngine/RenderingEngine.hpp"
+#include "../Color/Color.hpp"
+#include "../RenderingUtilities.hpp"
+
 
 // this is a GLFWwindow and not a class please check the name before using because
 // you might use BlockWindow which is a class.
@@ -28,7 +32,7 @@ public:
     BlockResult WindowShouldClose();
     void UpdateWindow();
     void MakeCurrentWindowContext();
-    BlockResult BackGroundColor(Color color);
+    BlockResult SetBackgroundColor(Color color);
     ~BlockWindow();
 
     BlockWindow() = default;

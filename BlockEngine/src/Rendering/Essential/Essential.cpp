@@ -3,10 +3,6 @@
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
 
-// glm
-#include "../../../external/glm/glm/glm.hpp" // vec2, vec3, mat4, radians
-#include "../../../external/glm/glm/ext.hpp" // perspective, translate, rotate
-
 // ========================
 // |         VAO          |
 // ========================

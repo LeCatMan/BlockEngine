@@ -1,6 +1,7 @@
 #pragma once
-#include <stdio.h>
+
 #include "../Color/Color.hpp"
+#include <stdio.h>
 
 
 // ========================

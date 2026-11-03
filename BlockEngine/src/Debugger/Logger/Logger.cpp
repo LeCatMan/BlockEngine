@@ -112,7 +112,7 @@ const LColor ORANGE = {255,130,0};
 static FILE* GlobalErrorFile = NULL;
 
 // Initialize logger at the programs start.
-BlockResult LoggerInit()
+BlockResult InitializeLogger()
 {
     
     #pragma region Timestamp Setup
@@ -178,10 +178,6 @@ BlockResult LoggerInit()
     printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1mLogger initialized: %s\033[0m>\n", TimeBuffer, Bold, "INFO", "Info", __FILE__, __LINE__, FileName);
     fprintf(GlobalErrorFile, "[%s] [INFO] -> Info in <%s> at line <%d>: <Logger initialized: %s>\n", TimeBuffer, __FILE__, __LINE__, FileName);
     fflush(GlobalErrorFile);
-    // completely innocent startup code
-    // absolutely nothing suspicious here
-    // definitely just starting the logger
-    dont_find_out_what_i_do();
     return BLOCK_SUCCESS_TRUE;
     #pragma endregion
 
@@ -189,7 +185,7 @@ BlockResult LoggerInit()
 
 
 // Shutdown logger at the programs end.
-BlockResult LoggerShutdown()
+BlockResult ShutDownLogger()
 {
 
     #pragma region Timestamp Setup

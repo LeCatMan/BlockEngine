@@ -1,8 +1,10 @@
 #pragma once
 
-// glad + glfw
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
+#include "../../Debugger/Utilities/BlockResult.hpp"
+
+class Shader2D;
 
 /* Texture flags. */
 typedef enum BlockTextureFlags
@@ -33,7 +35,7 @@ BLOCK_LINEAR = GL_LINEAR
 class Texture2D
 {
 private:
-    unsigned int texture = 0;
+    unsigned int Texture = 0;
     unsigned int Texture2DVAO = 0;
     unsigned int Texture2DVBO = 0;
     unsigned int Texture2DEBO = 0;
@@ -44,25 +46,17 @@ private:
 
 public:
 
-    void LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
-    void LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
+    BlockResult LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
+    BlockResult LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
     
     
-    void LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
-    void LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
-    
+    BlockResult LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
+    BlockResult LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
 
-    // plz don't use this its just some bullshit i need
-    void drawtexture2D(size_t ShapeIndicesSize);
+    void DrawTexture2D();
 
-    void DrawTexture2D()
-    {
-        drawtexture2D(SizeOfMeshIndices);
-    }
-    
-
-    void UnloadTexture2D(int Slot);
-    void UnloadTextureMesh2D();
+    BlockResult UnloadTexture2D();
+    BlockResult UnloadTextureMesh2D();
     ~Texture2D();
 
     Texture2D() = default;
@@ -70,6 +64,8 @@ public:
     Texture2D& operator=(const Texture2D&) = delete;
     Texture2D(Texture2D&&) = delete;
     Texture2D& operator=(Texture2D&&) = delete;
+
+    friend Shader2D;
 };
 
 

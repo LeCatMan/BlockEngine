@@ -5,33 +5,37 @@
 #include "Inputs/Inputs.hpp"
 
 
-
-
-
 /**
  * Initialize Block Engine
  * 
- * Initializes the Logger, Window, Input, and Audio systems,
- * and sets the key used to exit the engine.
+ * Initializes the Debugger, Rendring, Input, and Audio systems.
  *
- * @param width Window width.
- * @param height Window height.
- * @param title Window title.
- * @param exit_key Key used to exit the engine.
- * @param volume Master volume.
- * @param VSync VSync.
+ * @param Volume Master volume.
  *
  * Example:
- *     InitializeBlockEngine(800, 600, "Test", BLOCK_KEY_ESCAPE);
+ *     InitializeBlockEngine(1.0f);
  */
-inline void InitializeBlockEngine(float Volume)
+inline BlockResult InitializeBlockEngine(float Volume)
 {
-    this_is_a_very_long_phrase_that_hopefully_is_not_in_any_dictionary = "Guess:)";
-    LoggerInit();
-    GetCurrentRunningPath();
+    if (InitializeLogger() < 0)
+    {
+        printf("[\033[1m99h 99m 99s AM\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Couldn't initialize logger");
+        return BLOCK_ERR_INIT_FAILED;
+    }
     info("Launching BlockEngine");
-    InitializeRenderingEngine();
-    InitializeAudioEngine(Volume);
+    if (InitializeRenderingEngine() < 0)
+    {
+        error("Couldn't initialize Rendering Engine");
+        return BLOCK_ERR_INIT_FAILED;
+    }
+    if (InitializeAudioEngine(Volume) < 0)
+    {
+        error("Couldn't initialize Audio Engine");
+        return BLOCK_ERR_INIT_FAILED;
+    }
+    GetCurrentRunningPath();
+    info("Launched BlockEngine");
+    return BLOCK_SUCCESS_TRUE;
 }
 
 /**
@@ -39,13 +43,26 @@ inline void InitializeBlockEngine(float Volume)
  * ---------------------
  * Shuts down the Block Engine systems and closes the program.
  */
-inline void BlockEngineShutdown()
+inline BlockResult ShutDownBlockEngine()
 {
     info("Closing Program");
-    RenderingShutdown();
-    AudioShutdown();
+    if (ShutDownRenderingEngine() < 0)
+    {
+        printf("[\033[1m99h 99m 99s AM\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Couldn't Shutdown rendeing engine");
+        return BLOCK_FAILURE;
+    }
+    if (AudioShutDown() < 0)
+    {
+        printf("[\033[1m99h 99m 99s AM\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Couldn't Shutdown Audio");
+        return BLOCK_FAILURE;
+    }
     info("Closed Program");
-    LoggerShutdown();
+    if (ShutDownLogger() < 0)
+    {
+        printf("[\033[1m99h 99m 99s AM\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Couldn't Shutdown logger");
+        return BLOCK_FAILURE;
+    }
+    return BLOCK_SUCCESS_TRUE;
 }
 
 

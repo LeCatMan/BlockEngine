@@ -172,7 +172,7 @@ static inline float HalfFloat(float number)
     return number / 2.0f;
 }
 
-                                                                                                                                                                                                                                                                                                                                extern const char* this_is_a_very_long_phrase_that_hopefully_is_not_in_any_dictionary;
+
 // ########################
 // #    OTHER HELPERS     #
 // ########################

@@ -1,13 +1,9 @@
 #include "Window.hpp"
-#include "../RenderingUtilities.hpp"
-#include "../../Debugger/Logger/Logger.hpp"
-#include "../../Audio/Audio.hpp"
-#include "../RenderingEngine/RenderingEngine.hpp"
-
 
 // Update the viewport to match the window size.
 void FrameBufferSizeCallback(GLFWwindow *Window, int WindowWidth, int WindowHeight)
 {
+    glfwMakeContextCurrent(Window);
     //         x  y    width        height
     glViewport(0, 0, WindowWidth, WindowHeight);
 }
@@ -99,38 +95,33 @@ BlockResult BlockWindow::CreateWindow(int WindowWidth, int WindowHeight, const c
 // Checks the close flag of the specified window.
 BlockResult BlockWindow::WindowShouldClose()
 {
-    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    if (Isloaded)
     {
-        if (Isloaded)
-        {
-            return glfwWindowShouldClose(Window)
-                ? BLOCK_SUCCESS_TRUE
-                : BLOCK_SUCCESS_FALSE;
-        }
-        else
-        {
-            warning("Cannot check the window state because the window is closed");
-            return BLOCK_FAILURE;
-        }
+        return glfwWindowShouldClose(Window)
+            ? BLOCK_SUCCESS_TRUE
+            : BLOCK_SUCCESS_FALSE;
     }
     else
     {
-        warning("Cannot get the state of the window because the rendering engine is not Initialized");
         return BLOCK_FAILURE;
     }
-    return BLOCK_FAILURE;
 }
 
 
 // process rendering events.
 void BlockWindow::UpdateWindow()
 {
+    glfwMakeContextCurrent(Window);
     UpdateAudio();
     UpdateInput(this);
     glfwSwapBuffers(Window); // Swaps the front and back buffers of the specified window.
     if (KeyEvent(ExitKey, BLOCK_PRESS))
     {
         glfwSetWindowShouldClose(Window, GLFW_TRUE);
+    }
+    if (WindowShouldClose())
+    {
+        CloseWindow();
     }
 }
 
@@ -185,12 +176,13 @@ BlockResult BlockWindow::CloseWindow()
 }
 
 
-BlockResult BlockWindow::BackGroundColor(Color color)
+BlockResult BlockWindow::SetBackgroundColor(Color color)
 {
     if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
     {
         if (Isloaded)
         {
+            glfwMakeContextCurrent(Window);
             glClearColor((color.r), (color.g), (color.b), (color.a));
             glClear(GL_COLOR_BUFFER_BIT);
             return BLOCK_SUCCESS_TRUE;

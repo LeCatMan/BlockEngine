@@ -18,7 +18,7 @@ Block Engine provides a simple interface for building games through **its C and 
 
 ## Current Features
 
-* Window creation and management
+* Multi Window creation and management
 * OpenGL rendering
 * Basic shape rendering
 * Texture rendering and alpha blending
@@ -57,6 +57,7 @@ The roadmap will evolve as the engine develops.
 ### Core
 
 * [x] Window management
+* [x] Multi window support
 * [x] Input handling
 * [x] Basic rendering
 * [x] Audio

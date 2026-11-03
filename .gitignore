@@ -27,3 +27,7 @@ Logs/
 
 # Ignore generated asset headers
 BlockEngine/src/Assets/BlockEngine/GeneratedAssets/
+
+# Build output
+.build/
+

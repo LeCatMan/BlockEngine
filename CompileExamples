@@ -1,14 +1,12 @@
-
 #!/bin/bash
 
-cd Examples || exit 1
+SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"
+ROOT_DIR="$(dirname "$SCRIPT_PATH")"
+
+cd "$ROOT_DIR/Examples" || exit 1
 
 if [ $# -eq 0 ]; then
-    make -f Example.mk run
-elif [ "$1" = "windows" ]; then
-    make -f Example.mk run-windows
-else
-    make -f Example.mk "$@"
+    set -- all
 fi
 
-cd ..
+exec make -f Examples.mk "$@"

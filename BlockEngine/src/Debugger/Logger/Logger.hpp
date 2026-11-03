@@ -17,8 +17,8 @@
 #include <sys/stat.h>
 #endif
 
-BlockResult LoggerInit(void);
-BlockResult LoggerShutdown(void);
+BlockResult InitializeLogger();
+BlockResult ShutDownLogger();
 BlockResult Error(const char* Message, const char* File, int Line);
 BlockResult Trace(const char* Message, const char* File, int Line);
 BlockResult Info(const char* Message, const char* File, int Line);

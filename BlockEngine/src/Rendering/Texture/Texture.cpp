@@ -1,4 +1,5 @@
 #include "Texture.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../../external/stb-master/stb_image.h"
 #include "../../Debugger/Logger/Logger.hpp"
@@ -6,7 +7,10 @@
 #include "../Shader/Shader.hpp"
 #include "../RenderingEngine/RenderingEngine.hpp"
 #include <stdio.h>
-
+#include "../../../external/glm/glm/glm.hpp"
+#include "../../../external/glm/glm/gtc/matrix_transform.hpp"
+#include "../../../external/glm/glm/gtc/type_ptr.hpp"
+#include "../../Assets/BlockEngine/BasicShapes/Data/2D/Data.hpp"
 
 
 /**
@@ -17,11 +21,12 @@
  * @param Border Controls how the texture behaves outside its normal UV range.
  * @param RGBA When it's true the image will use RGBA when its false it will use RGB.
 */
-void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
+BlockResult Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
 {
-    if (texture != 0)
+    if (Texture != 0)
     {
         warning("The texture is already loaded!");
+        return BLOCK_SUCCESS_FALSE;
     }
     else
     {
@@ -33,11 +38,11 @@ void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFil
         {
             error("Failed to Load texture!");
             error("STBI reason: %s", stbi_failure_reason());
-            return;
+            return BLOCK_ERR_INIT_FAILED;
         }
 
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenTextures(1, &Texture);
+        glBindTexture(GL_TEXTURE_2D, Texture);
         // set the texture wrapping/filtering options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Border);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Border);
@@ -54,6 +59,7 @@ void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFil
             else
             {
                 error("Failed to Load texture!");
+                return BLOCK_ERR_INIT_FAILED;
             }
             stbi_image_free(data);
         }
@@ -67,11 +73,13 @@ void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFil
             else
             {
                 error("Failed to Load texture!");
+                return BLOCK_ERR_INIT_FAILED;
             }
             stbi_image_free(data);
         }
         rendering("Loaded texture");
         IsLoaded = true;
+        return BLOCK_SUCCESS_TRUE;
     }
 };
 
@@ -85,11 +93,12 @@ void Texture2D::LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFil
  * @param Border Controls how the texture behaves outside its normal UV range.
  * @param RGBA When it's true the image will use RGBA when its false it will use RGB.
 */
-void Texture2D::LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
+BlockResult Texture2D::LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA)
 {
     if (IsLoaded)
     {
         warning("The texture is already loaded!");
+        return BLOCK_SUCCESS_FALSE;
     }
     else
     {
@@ -102,11 +111,11 @@ void Texture2D::LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, B
         {
             error("Failed to Load texture!");
             error("STBI reason: %s", stbi_failure_reason());
-            return;
+            return BLOCK_ERR_INIT_FAILED;
         }
 
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenTextures(1, &Texture);
+        glBindTexture(GL_TEXTURE_2D, Texture);
         // set the texture wrapping/filtering options
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, Border);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, Border);
@@ -118,24 +127,28 @@ void Texture2D::LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, B
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
             stbi_image_free(data);
+            return BLOCK_SUCCESS_TRUE;
         }
         else 
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
             stbi_image_free(data);
+            return BLOCK_SUCCESS_TRUE;
         }
         rendering("Loaded texture");
         IsLoaded = true;
+        return BLOCK_SUCCESS_TRUE;
     }
 };
 
 
-void Texture2D::LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
+BlockResult Texture2D::LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
 {
     if (IsMeshLoaded)
     {
         warning("The mesh is already loaded!");
+        return BLOCK_SUCCESS_FALSE;
     }
     else
     {
@@ -148,15 +161,17 @@ void Texture2D::LoadTextureMesh2D(const char *VertexShaderPath, const char *Frag
         CreateEBO(MeshIndices, MeshIndicesSize, &Texture2DEBO);
         ShaderProgram(&Texture2DShader, Shader.VertexShader, Shader.FragmentShader);
         IsMeshLoaded = true;
+        return BLOCK_SUCCESS_TRUE;
     }
 }
 
 
-void Texture2D::LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
+BlockResult Texture2D::LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor)
 {
     if (IsMeshLoaded)
     {
         warning("The mesh is already loaded!");
+        return BLOCK_SUCCESS_FALSE;
     }
     else
     {
@@ -169,47 +184,53 @@ void Texture2D::LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const ch
         CreateEBO(MeshIndices, MeshIndicesSize, &Texture2DEBO);
         ShaderProgram(&Texture2DShader, Shader.VertexShader, Shader.FragmentShader);
         IsMeshLoaded = true;
+        return BLOCK_SUCCESS_TRUE;
     }
 }
 
 
-void Texture2D::drawtexture2D(size_t ShapeIndicesSize)
+void Texture2D::DrawTexture2D()
 {
     glUseProgram(Texture2DShader);
     glActiveTexture(GL_TEXTURE0);
-    glUniform1i(glGetUniformLocation(Texture2DShader, "texture1"), 0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glUniform1i(glGetUniformLocation(Texture2DShader, "Texture"), 0);
+    unsigned int transformLoc = glGetUniformLocation(Texture2DShader, "Transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, BasicTransform);
+    glBindTexture(GL_TEXTURE_2D, Texture);
     glBindVertexArray(Texture2DVAO);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, ShapeIndicesSize, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, SizeOfMeshIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
 
-void Texture2D::UnloadTexture2D(int Slot)
+BlockResult Texture2D::UnloadTexture2D()
 {
     if (RenderingInitialized)
     {
         if (IsLoaded)
         {
-            glDeleteTextures(1, &texture);
-            texture = 0;
+            glDeleteTextures(1, &Texture);
+            Texture = 0;
             IsLoaded = false;
             rendering("Unloaded the texture");
+            return BLOCK_SUCCESS_TRUE;
         }
         else
         {
             warning("The texture is already been unloaded!");
+            return BLOCK_SUCCESS_FALSE;
         }
     }
     else
     {
         error("Cannot unload Texture2D because the Rendering engine isn't Initialized");
+        return BLOCK_FAILURE;
     }
 }
 
 
-void Texture2D::UnloadTextureMesh2D()
+BlockResult Texture2D::UnloadTextureMesh2D()
 {
     if (RenderingInitialized)
     {
@@ -221,15 +242,18 @@ void Texture2D::UnloadTextureMesh2D()
             DestroyEBO(Texture2DEBO);
             IsMeshLoaded = false;
             rendering("Unloaded the TextureMesh");
+            return BLOCK_SUCCESS_TRUE;
         }
         else
         {
             warning("The TextureMesh2D is already been unloaded!");
+            return BLOCK_SUCCESS_FALSE;
         }
     }
     else
     {
         error("Cannot unload Texture2D because the Rendering engine isn't Initialized");
+        return BLOCK_FAILURE;
     }
 }
 
@@ -247,6 +271,10 @@ Texture2D::~Texture2D()
             IsMeshLoaded = false;
             rendering("Unloaded the TextureMesh");
         }
+    }
+    else
+    {
+        error("Cannot unload Texture2D because the Rendering engine isn't Initialized");
     }
 }
 

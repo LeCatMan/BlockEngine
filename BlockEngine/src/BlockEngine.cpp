@@ -83,7 +83,7 @@ int main() {
                 }
             }
             
-            Window.BackGroundColor(BGColor);
+            Window.SetBackgroundColor(BGColor);
             MySquare.DrawSquare();
             MyTriangle.DrawTriangle();
 
@@ -97,7 +97,7 @@ int main() {
         info("Exited Game Loop");
     }
 
-    BlockEngineShutdown();
+    ShutDownBlockEngine();
     return 0;
 }
 

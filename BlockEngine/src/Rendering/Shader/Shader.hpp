@@ -1,6 +1,11 @@
 #pragma once
+
+
+#include "../../Debugger/Logger/Logger.hpp"
+#include "../../Debugger/Utilities/BlockResult.hpp"
 #include "../Shape/Shape.hpp"
 #include "../Texture/Texture.hpp"
+
 
 /**
  * Shader2D

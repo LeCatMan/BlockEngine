@@ -60,7 +60,7 @@ void UpdateAudio()
 }
 
 
-BlockResult AudioShutdown()
+BlockResult AudioShutDown()
 {
     if (Initialized)
     {

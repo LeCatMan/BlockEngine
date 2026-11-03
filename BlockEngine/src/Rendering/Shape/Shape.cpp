@@ -1,22 +1,29 @@
 #include "Shape.hpp"
+
+#include "Shape.hpp"
 #include "../Shader/Shader.hpp"
 #include "../Window/Window.hpp"
 #include "../RenderingUtilities.hpp"
 #include "../Essential/Essential.hpp"
 #include "../RenderingEngine/RenderingEngine.hpp"
-#include "../../Debugger/Logger/Logger.hpp"
 #include <stdio.h>
 #include <string.h>
 
+#include "../../../external/glad/include/glad/glad.h"
+#include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
+#include "../../Assets/BlockEngine/BasicShapes/BasicShapes.hpp"
+#include "../Color/Color.hpp"
 
 
-void Shape2D::LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color)
+
+BlockResult Shape2D::LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color)
 {
     if (RenderingInitialized)
     {
         if (IsLoaded)
         {
             warning("Cannot load Shape2D because it's already loaded");
+            return BLOCK_FAILURE;
         }
         else
         {
@@ -37,22 +44,25 @@ void Shape2D::LoadShape2D(const char *VertexShaderPath, const char *FragmentShad
             glUseProgram(Shape2DShader);
             glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);
             IsLoaded = true;
+            return BLOCK_SUCCESS_TRUE;
         }
     }
     else
     {
         error("Cannot load Shape2D because the Rendering engine isn't Initialized");
+        return BLOCK_FAILURE;
     }
 }
 
 
-void Shape2D::LoadEmbeddedShape2D(const char *VertexShaderSource, const char *FragmentShaderSource, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color)
+BlockResult Shape2D::LoadEmbeddedShape2D(const char *VertexShaderSource, const char *FragmentShaderSource, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color)
 {
     if (RenderingInitialized)
     {
         if (IsLoaded)
         {
             warning("Cannot load EmbeddedShape2D because it's already loaded");
+            return BLOCK_FAILURE;
         }
         else
         {
@@ -73,11 +83,13 @@ void Shape2D::LoadEmbeddedShape2D(const char *VertexShaderSource, const char *Fr
             glUseProgram(Shape2DShader);
             glUniform4f(glGetUniformLocation(Shape2DShader, "color"), color.r, color.g, color.b, color.a);
             IsLoaded = true;
+            return BLOCK_SUCCESS_TRUE;
         }
     }
     else
     {
         error("Cannot load EmbeddedShape2D because the Rendering engine isn't Initialized");
+        return BLOCK_FAILURE;
     }
 }
 
@@ -98,7 +110,7 @@ void Shape2D::DrawShape2D(size_t ShapeIndicesSize)
 }
 
 
-void Shape2D::UnloadShape2D()
+BlockResult Shape2D::UnloadShape2D()
 {
     if (RenderingInitialized)
     {
@@ -124,15 +136,18 @@ void Shape2D::UnloadShape2D()
             IsLoaded = false;
 
             rendering("Destroyed the Shapes resources");
+            return BLOCK_SUCCESS_TRUE;
         }
         else
         {
             warning("Cannot unload Shape2D because it's already unload");
+            return BLOCK_FAILURE;
         }
     }
     else
     {
         error("Cannot unload Shape2D because the Rendering engine isn't Initialized");
+        return BLOCK_FAILURE;
     }
 }
 

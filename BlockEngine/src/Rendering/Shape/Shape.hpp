@@ -1,10 +1,10 @@
 #pragma once
-#include "../../Assets/BlockEngine/BasicShapes/BasicShapes.hpp"
+
 #include "../../Debugger/Logger/Logger.hpp"
-#include "../Color/Color.hpp"
-// glad + glfw
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
+#include "../../Assets/BlockEngine/BasicShapes/BasicShapes.hpp"
+#include "../Color/Color.hpp"
 
 // ########################
 // #          2D          #
@@ -34,13 +34,13 @@ public:
 
     Shape2D() = default;
 
-    void LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
+    BlockResult LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
 
-    void LoadEmbeddedShape2D(const char *VertexShaderSource, const char *FragmentShaderSource, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
+    BlockResult LoadEmbeddedShape2D(const char *VertexShaderSource, const char *FragmentShaderSource, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
 
     void DrawShape2D(size_t ShapeIndicesSize);
 
-    void UnloadShape2D();
+    BlockResult UnloadShape2D();
 
     ~Shape2D();
 

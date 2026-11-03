@@ -1,0 +1,23 @@
+
+
+@font-face {
+    font-family: "DynaPuff";
+    src: url("DynaPuff-VariableFont_wdth,wght.ttf") format("truetype");
+    font-weight: 400 700;
+    font-style: normal;
+}
+
+
+.BackGround
+{
+    background-image: url("Block.png");
+    background-repeat: repeat;
+    margin: 0;
+}
+
+.Title
+{
+    position: relative;
+    margin-left: calc(50% - 512px);
+}
+

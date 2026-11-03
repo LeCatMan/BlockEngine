@@ -42,7 +42,7 @@ BlockResult InitializeRenderingEngine()
 }
 
 
-BlockResult RenderingShutdown()
+BlockResult ShutDownRenderingEngine()
 {
     if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
     {
