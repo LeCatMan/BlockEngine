@@ -3,6 +3,9 @@
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
 #include "../../Debugger/Utilities/BlockResult.hpp"
+#include "../Color/Color.hpp"
+
+using Blockwindow = GLFWwindow;
 
 class Shader2D;
 
@@ -31,29 +34,32 @@ BLOCK_LINEAR = GL_LINEAR
 
 } BlockTextureFlags;
 
+struct Texture2DTarget
+{
+    Blockwindow *Window = nullptr;
+    unsigned int Texture2DVAO = 0, Texture2DVBO = 0, Texture2DEBO = 0, Texture2DShader = 0;
+};
+
 
 class Texture2D
 {
 private:
     unsigned int Texture = 0;
-    unsigned int Texture2DVAO = 0;
-    unsigned int Texture2DVBO = 0;
-    unsigned int Texture2DEBO = 0;
-    unsigned int Texture2DShader = 0;
     size_t SizeOfMeshIndices = 0;
-    bool IsLoaded = false;
     bool IsMeshLoaded = false;
-
+    bool IsLoaded = false;
+    std::vector<Texture2DTarget> Windows;
+    int count = 0;
 public:
 
-    BlockResult LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
-    BlockResult LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, BlockTextureFlags Border, bool RGBA);
+    BlockResult LoadTexture2D(const char *ImagePath, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, bool RGBA);
+    BlockResult LoadEmbeddedTexture2D(const char *ImageData, size_t ImageSize, BlockTextureFlags MinifyFilter, BlockTextureFlags MagnifyingFilter, bool RGBA);
     
     
-    BlockResult LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
-    BlockResult LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor);
+    BlockResult LoadTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor, BlockTextureFlags TextureBorder, Color TextureBorderColor, Color color, Blockwindow **Window, int WindowCount);
+    BlockResult LoadEmbeddedTextureMesh2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *MeshIndices, size_t MeshIndicesSize, size_t MeshIndicesArraySize, bool PerVertexColor, BlockTextureFlags TextureBorder, Color TextureBorderColor, Color color, Blockwindow **Window, int WindowCount);
 
-    void DrawTexture2D();
+    void Draw(int WindowNumber, bool WireMode, Color color, FloatVector3 Position, FloatVector3 Rotation, FloatVector3 Scale);
 
     BlockResult UnloadTexture2D();
     BlockResult UnloadTextureMesh2D();

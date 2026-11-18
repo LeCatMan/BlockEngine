@@ -6,6 +6,8 @@ if [ $# -eq 0 ]; then
     make -f BlockEngine.mk run
 elif [ "$1" = "windows" ]; then
     make -f BlockEngine.mk run-windows
+elif [ "$1" = "gdb" ] && [ "$2" = "windows" ]; then
+    make -f BlockEngine.mk gdb-windows
 else
     make -f BlockEngine.mk "$@"
 fi

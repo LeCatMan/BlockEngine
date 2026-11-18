@@ -114,7 +114,6 @@ static FILE* GlobalErrorFile = NULL;
 // Initialize logger at the programs start.
 BlockResult InitializeLogger()
 {
-    
     #pragma region Timestamp Setup
     // those are just to put the time to the hard-coded logs.
     char TimeBuffer[64];
@@ -122,15 +121,40 @@ BlockResult InitializeLogger()
     strftime(TimeBuffer, sizeof(TimeBuffer), "%Ih %Mm %Ss %p", localtime(&Time));
     #pragma endregion
 
+    #pragma region Program Path Setup
+    // gets the folder of the program, not the folder it was launched from.
+    char ExePath[1024];
+    #ifdef _WIN32
+        DWORD ExeLen = GetModuleFileNameA(NULL, ExePath, sizeof(ExePath));
+        if (ExeLen == 0 || ExeLen >= sizeof(ExePath)) ExePath[0] = '\0';
+    #else
+        ssize_t ExeLen = readlink("/proc/self/exe", ExePath, sizeof(ExePath) - 1);
+        if (ExeLen <= 0) ExePath[0] = '\0';
+        else ExePath[ExeLen] = '\0';
+    #endif
+
+    // cuts the program name off, leaving only the folder.
+    char *LastSlash = strrchr(ExePath, '/');
+    char *LastBackSlash = strrchr(ExePath, '\\');
+    if (LastBackSlash > LastSlash) LastSlash = LastBackSlash;
+
+    if (LastSlash) *LastSlash = '\0';
+    else snprintf(ExePath, sizeof(ExePath), ".");
+    #pragma endregion
+
     #pragma region Log File and Output Configuration
-    char FailSafe[1124];         // Overflow protection for huge log strings
-    const char* FolderName = "Logs"; // the folder name.
-    char FileName[1024];         // The file location.
+    char FolderName[1024];          // the folder name.
+    int FolderLen = snprintf(FolderName, sizeof(FolderName), "%s/Logs", ExePath);
+    if (FolderLen < 0 || (size_t)FolderLen >= sizeof(FolderName))
+    {
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, Bold ";" SlowBlink ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Logger folder path too long!");
+        return BLOCK_ERR_FILE_IO;
+    }
+    char FileName[1024];            // The file location.
     int Number = 1;                 // Index used for auto-incrementing log filenames
     #pragma endregion
 
     #pragma region Makes sure folder exists
-    
     #ifdef _WIN32
         int MakeDirResult = _mkdir(FolderName);
     #else
@@ -139,24 +163,20 @@ BlockResult InitializeLogger()
 
     if (MakeDirResult == 0 || errno == EEXIST)
     {
-        #pragma region Creates the folder if it doesnt exist
         while (true)
         {
-            int FilePath = snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
-
-            if(FilePath < 0 || FilePath >= sizeof(FileName))
+            int len = snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
+            if (len < 0 || (size_t)len >= sizeof(FileName))
             {
-                snprintf(FailSafe, sizeof(FailSafe), "rm %s/*", FolderName);
-                system(FailSafe);
+                error("Log path too long");
+                return BLOCK_ERR_FILE_IO;
             }
 
-            snprintf(FileName, sizeof(FileName), "%s/Log-%03d.txt", FolderName, Number);
-            FILE* f = fopen(FileName, "r");
-            if (!f) break; // file doesn't exist then use it
+            FILE *f = fopen(FileName, "r");
+            if (!f) break;
             fclose(f);
             Number++;
         }
-        #pragma endregion
     }
     else
     {
@@ -180,7 +200,6 @@ BlockResult InitializeLogger()
     fflush(GlobalErrorFile);
     return BLOCK_SUCCESS_TRUE;
     #pragma endregion
-
 }
 
 
@@ -292,60 +311,6 @@ BlockResult AudioLog(const char* Message, const char* File, int Line)
 BlockResult Rendering(const char* Message, const char* File, int Line)
 {
     return Template(Message, File, Line, "RENDERING", "Rendering", Bold ";" Foreground ";150;79;217");
-}
-
-
-// Special ... ;)
-BlockResult Special(const char* Message, const char* File, int Line)
-{
-    const char* Colors[] = {
-        "255;0;0",
-        "255;130;0",
-        "255;255;0",
-        "180;255;0",
-        "0;255;100",
-        "0;255;255",
-        "44;135;255",
-        "120;0;255",
-        "255;0;255"
-    };
-
-    size_t Length = strlen(Message);
-
-    for (int Cycle = 0; Cycle < 3; Cycle++)
-    {
-        for (int Frame = 0; Frame < 30; Frame++)
-        {
-            printf("\r\033[K");
-
-            for (size_t i = 0; i < Length; i++)
-            {
-                if ((rand() % 5) == 0)
-                    printf(" ");
-                else
-                    printf("\033[38;2;%sm%c\033[0m", Colors[(i + Frame) % 9], Message[i]);
-            }
-
-            fflush(stdout);
-            usleep(50000);
-        }
-    }
-
-    printf("\r\033[K");
-
-    for (size_t i = 0; i < Length; i++)
-        printf("\033[38;2;%sm%c\033[0m", Colors[i % 9], Message[i]);
-
-    printf("\n");
-    fflush(stdout);
-
-    if (GlobalErrorFile)
-    {
-        fprintf(GlobalErrorFile, "[SPECIAL] -> <%s>\n", Message);
-        fflush(GlobalErrorFile);
-    }
-
-    return BLOCK_SUCCESS_TRUE;
 }
 
 

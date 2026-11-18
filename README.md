@@ -8,11 +8,13 @@ Block Engine is a custom made game engine written in **C++ and C**.
 
 Block Engine provides a simple interface for building games through **its C and C++ API**, while still giving developers control over the engine.
 
+> BlockEngine is like a canvas do i give you a limited canvas but i give you all the colors and tools or an infinite canvas with basic tools to do anything.
+
 ---
 
 ## Preview
 
-<img width="800" height="600" alt="BlockEngineAlpha0 6Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/BlockEngineAlpha0.7Preview.gif" />
+<img width="800" height="600" alt="Block Engine Alpha 0.76 Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/Preview/BlockEngineAlpha0.76Preview.mp4" />
 
 ---
 
@@ -44,7 +46,7 @@ Block Engine is made for developers who want useful abstractions without being l
 
 ## Development Status
 
-Block Engine is currently in **Alpha 0.73** and is actively being developed.
+Block Engine is currently in **Alpha 0.76** and is actively being developed.
 
 It is an early stage project so the APIs and features may change, break, or be replaced as development continues.
 
@@ -147,3 +149,5 @@ Yes i use ai **BUT** i only use it to:
  * To make comments because it's faster than me
  * to read walls of errors in compile time to tell me where they happened then **i fix them**
 
+
+> Also i love ternaries, they look like this `condition ? value_if_true : value_if_false`

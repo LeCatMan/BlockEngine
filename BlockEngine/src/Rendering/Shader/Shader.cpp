@@ -7,7 +7,7 @@ BlockResult Shader2D::CreateShader2D(const char *VertexShaderSourcePath, const c
 {
     #pragma region Vertex Shader
 
-    const char *VertexSource = GetFileText(VertexShaderSourcePath);
+    char *VertexSource = GetFileText(VertexShaderSourcePath);
 
     if(!VertexSource)
     {
@@ -17,6 +17,9 @@ BlockResult Shader2D::CreateShader2D(const char *VertexShaderSourcePath, const c
 
     vertexshadersource = new char[strlen(VertexSource) + 1];
     strcpy(vertexshadersource, VertexSource);
+
+    free(VertexSource);
+    VertexSource = nullptr;
 
     if(!vertexshadersource)
     {
@@ -46,7 +49,7 @@ BlockResult Shader2D::CreateShader2D(const char *VertexShaderSourcePath, const c
 
     #pragma region Fragment Shader
 
-    const char *FragmentSource = GetFileText(FragmentShaderSourcePath);
+    char *FragmentSource = GetFileText(FragmentShaderSourcePath);
 
     if(!FragmentSource)
     {
@@ -56,6 +59,9 @@ BlockResult Shader2D::CreateShader2D(const char *VertexShaderSourcePath, const c
 
     fragmentshadersource = new char[strlen(FragmentSource) + 1];
     strcpy(fragmentshadersource, FragmentSource);
+
+    free(FragmentSource);
+    FragmentSource = nullptr;
 
     if(!fragmentshadersource)
     {
@@ -87,14 +93,19 @@ BlockResult Shader2D::CreateEmbeddedShader2D(const char *VertexShaderSource, con
 {
     #pragma region Vertex Shader
 
-    vertexshadersource = new char[strlen(VertexShaderSource) + 1];
-    strcpy(vertexshadersource, VertexShaderSource);
-
-    if(!vertexshadersource)
+    if (!VertexShaderSource)
     {
         error("Invalid Source (VertexShaderSource)");
         return BLOCK_ERR_INVALID_PARAM;
     }
+
+    vertexshadersource = new (std::nothrow) char[strlen(VertexShaderSource) + 1];
+    if (!vertexshadersource)
+    {
+        error("Bad memory alloc (VertexShaderSource)");
+        return BLOCK_ERR_INIT_FAILED;
+    }
+    strcpy(vertexshadersource, VertexShaderSource);
 
     VertexShader = glCreateShader(GL_VERTEX_SHADER);            // creating the vertex shader.
     glShaderSource(VertexShader, 1, &vertexshadersource, NULL); // addes the source to the shader.
@@ -118,14 +129,19 @@ BlockResult Shader2D::CreateEmbeddedShader2D(const char *VertexShaderSource, con
 
     #pragma region Fragment Shader
 
-    fragmentshadersource = new char[strlen(FragmentShaderSource) + 1];
-    strcpy(fragmentshadersource, FragmentShaderSource);
-
-    if(!vertexshadersource)
+    if (!FragmentShaderSource)
     {
         error("Invalid Source (FragmentShaderSource)");
         return BLOCK_ERR_INVALID_PARAM;
     }
+
+    fragmentshadersource = new (std::nothrow) char[strlen(FragmentShaderSource) + 1];
+    if (!fragmentshadersource)
+    {
+        error("Bad memory alloc (FragmentShaderSource)");
+        return BLOCK_ERR_INIT_FAILED;
+    }
+    strcpy(fragmentshadersource, FragmentShaderSource);
 
     FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(FragmentShader, 1, &fragmentshadersource, NULL);

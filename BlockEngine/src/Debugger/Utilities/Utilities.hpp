@@ -13,7 +13,7 @@
     #include <unistd.h>
 #endif
 
-extern char RunningPath[1024];
+extern char CurrentRunningPath[1024];
 
 
 void GetCurrentRunningPath();

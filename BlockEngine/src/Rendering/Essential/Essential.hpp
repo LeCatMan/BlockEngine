@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Color/Color.hpp"
-#include <stdio.h>
+#include "../Texture/Texture.hpp"
 
 
 // ========================
@@ -9,10 +9,10 @@
 // ========================
 
 
-void CreateVAO(unsigned int *VAO);
+BlockResult CreateVAO(unsigned int *VAO);
 
 
-void DestroyVAO(unsigned int VAO);
+BlockResult DestroyVAO(unsigned int VAO);
 
 
 // ========================
@@ -20,13 +20,10 @@ void DestroyVAO(unsigned int VAO);
 // ========================
 
 
-/**
- * @param Stride you can put it to 0 to auto stride.
- */
-void CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bool PerVertexColor, bool texture, size_t Stride, Color BorderColor, bool RGBA);
+BlockResult CreateVBO(const float *Vertices, size_t VerticesSize, unsigned int *VBO, bool PerVertexColor, bool texture, bool RGBA, BlockTextureFlags TextureBorder = BLOCK_TEXTURE_REPEAT, Color TextureBorderColor = Color(255, 0, 255, 255));
 
 
-void DestroyVBO(unsigned int VBO);
+BlockResult DestroyVBO(unsigned int VBO);
 
 
 // ========================
@@ -34,10 +31,10 @@ void DestroyVBO(unsigned int VBO);
 // ========================
 
 
-void CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO);
+BlockResult CreateEBO(const unsigned int *Indices, size_t Size, unsigned int *EBO);
 
 
-void DestroyEBO(unsigned int EBO);
+BlockResult DestroyEBO(unsigned int EBO);
 
 
 // ========================
@@ -45,7 +42,7 @@ void DestroyEBO(unsigned int EBO);
 // ========================
 
 
-void ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int FragmentShader);
+BlockResult ShaderProgram(unsigned int *Shader, unsigned int VertexShader, unsigned int FragmentShader);
 
-void DestroyShader(unsigned int Shader);
+BlockResult DestroyShader(unsigned int Shader);
 

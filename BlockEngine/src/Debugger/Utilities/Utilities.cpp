@@ -1,4 +1,5 @@
 #include "Utilities.hpp"
+#include <new>
 
 char CurrentRunningPath[1024];
 
@@ -22,13 +23,13 @@ void GetCurrentRunningPath()
         }
         else
         {
-            printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, ("Failed to get current working directory: %s", strerror(errno)));
+            printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1mCannot open:%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s%s\033[0m>\n", TimeBuffer, "1" ";" "5" ";" "31", "ERROR", "Error", __FILE__, __LINE__, "Failed to get current working directory: ", strerror(errno));
         }
         return;
     }
     else
     {
-        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s\033[0m>\n", TimeBuffer, "1", "INFO", "Info", __FILE__, __LINE__, ("The current running path is: %s", CurrentRunningPath));
+        printf("[\033[1m%s\033[0m] [\033[%sm%s\033[0m] -> %s in <\033[1m%s\033[0m> at line <\033[1m%d\033[0m>: <\033[1m%s%s\033[0m>\n", TimeBuffer, "1", "INFO", "Info", __FILE__, __LINE__, "The current running path is: ", CurrentRunningPath);
         return;
     }
     
@@ -49,7 +50,7 @@ char *GetFileText(const char *FileName)
     fseek(File, 0, SEEK_END);
     long Sizw = ftell(File);
     rewind(File);
-
+    
     char *Text = (char *)malloc(Sizw + 1);
 
     if (Text == NULL)
@@ -57,6 +58,7 @@ char *GetFileText(const char *FileName)
         fclose(File);
         return NULL;
     }
+
     #pragma endregion
 
     #pragma region Get the text
@@ -66,7 +68,6 @@ char *GetFileText(const char *FileName)
     #pragma endregion
     
     return Text;
-
 }
 
 

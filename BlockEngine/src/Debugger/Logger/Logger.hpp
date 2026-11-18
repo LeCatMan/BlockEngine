@@ -23,7 +23,6 @@ BlockResult Error(const char* Message, const char* File, int Line);
 BlockResult Trace(const char* Message, const char* File, int Line);
 BlockResult Info(const char* Message, const char* File, int Line);
 BlockResult Warning(const char* Message, const char* File, int Line);
-BlockResult Special(const char* Message, const char* File, int Line);
 BlockResult Debug(const char* Message, const char* File, int Line);
 BlockResult AudioLog(const char* Message, const char* File, int Line);
 BlockResult Rendering(const char* Message, const char* File, int Line);
@@ -138,20 +137,4 @@ BlockResult Rendering(const char* Message, const char* File, int Line);
     } \
 } while(0)
 #pragma endregion
-
-
-#pragma region special
-#define special(Message, ...) do { \
-    int size = snprintf(nullptr, 0, Message, ##__VA_ARGS__); \
-    if (size < 0) { \
-        Error("Failed to format message", __FILE__, __LINE__); \
-    } \
-    else { \
-        std::vector<char> Buffer(size + 1); \
-        snprintf(Buffer.data(), Buffer.size(), Message, ##__VA_ARGS__); \
-        Special(Buffer.data(), __FILE__, __LINE__); \
-    } \
-} while(0)
-#pragma endregion
-
 

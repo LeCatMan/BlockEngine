@@ -1,6 +1,4 @@
-class BlockWindow;
-#include "KeyBoardUtilities.hpp"
-#include <stdio.h>
+#include "Keyboard.hpp"
 #include "../Inputs.hpp"
 
 
@@ -8,18 +6,18 @@ static bool previousState[GLFW_KEY_LAST + 1] = {};
 static bool currentState[GLFW_KEY_LAST + 1] = {};
 
 
-void InitializeInput(BlockWindow *Window)
+void InitializeInput(Blockwindow *Window)
 {
-    glfwSetInputMode(Window->Window, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(Window, GLFW_STICKY_KEYS, GLFW_TRUE);
 }
 
-void UpdateInput(BlockWindow *Window)
+void UpdateInput(Blockwindow *Window)
 {
     glfwPollEvents();
     for (int key = 0; key <= GLFW_KEY_LAST; ++key)
     {
         previousState[key] = currentState[key];
-        currentState[key] = glfwGetKey(Window->Window, key) == GLFW_PRESS;
+        currentState[key] = glfwGetKey(Window, key) == GLFW_PRESS;
     }
 }
 

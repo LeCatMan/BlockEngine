@@ -1,16 +1,23 @@
 #pragma once
 
+#include <vector>
+#include "../Window/Window.hpp"
 #include "../../Debugger/Logger/Logger.hpp"
 #include "../../../external/glad/include/glad/glad.h"
 #include "../../../external/glfw-3.5.1/include/GLFW/glfw3.h"
 #include "../../Assets/BlockEngine/BasicShapes/BasicShapes.hpp"
+#include "../../Assets/BlockEngine/GeneratedAssets/GeneratedAssets.hpp"
 #include "../Color/Color.hpp"
 
 // ########################
 // #          2D          #
 // ########################
 
-class BlockWindow;
+struct Shape2DTarget
+{
+    Blockwindow *Window = nullptr;
+    unsigned int Shape2DVAO = 0, Shape2DVBO = 0, Shape2DEBO = 0, Shape2DShader = 0;
+};
 
 /**
  * Shape2D
@@ -22,23 +29,19 @@ class BlockWindow;
 class Shape2D
 {
 protected:
-    char *VertexShader = nullptr;
-    char *FragmentShader = nullptr;
-    unsigned int Shape2DVAO = 0;
-    unsigned int Shape2DVBO = 0;
-    unsigned int Shape2DEBO = 0;
-    unsigned int Shape2DShader = 0;
     bool IsLoaded = false;
-    GLFWwindow *window = nullptr;
+    std::vector<Shape2DTarget> Windows;
+    int count = 0;
+    size_t SizeOfMeshIndices = 0;
 public:
 
     Shape2D() = default;
 
-    BlockResult LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
+    BlockResult LoadShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, size_t ShapeIndicesArraySize, bool PerVertexColor, Color color, Blockwindow **Window, int WindowCount);
 
-    BlockResult LoadEmbeddedShape2D(const char *VertexShaderSource, const char *FragmentShaderSource, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, BlockWindow *Window, bool PerVertexColor, Color color);
+    BlockResult LoadEmbeddedShape2D(const char *VertexShaderPath, const char *FragmentShaderPath, const float *Vertices, size_t VerticesSize, const unsigned int *ShapeIndices, size_t ShapeIndicesSize, size_t ShapeIndicesArraySize, bool PerVertexColor, Color color, Blockwindow **Window, int WindowCount);
 
-    void DrawShape2D(size_t ShapeIndicesSize);
+    void DrawShape2D(int WindowNumber, bool WireMode, Color color, FloatVector3 Position, FloatVector3 Rotation, FloatVector3 Scale);
 
     BlockResult UnloadShape2D();
 
@@ -59,67 +62,93 @@ public:
 class Triangle : public Shape2D
 {
 public:
-    Triangle(Color color, BlockWindow *Window)
-    {
-        LoadShape2D
-        (
-        "src/Assets/BlockEngine/Shaders/BasicPerVertexVertexShader.vert",
-        "src/Assets/BlockEngine/Shaders/BasicPerVertexFragmentShader.frag",
-        TriangleVerticesColor,
-        sizeof(TriangleVerticesColor),
-        TriangleIndices,
-        sizeof(TriangleIndices),
-        Window,
-        true,
-        color
-        );
 
-        rendering("Creating Triangle Resources");
+    Triangle() = default;
+
+    BlockResult Create(Color color, Blockwindow **Window, int WindowCount, bool PerVertexColoring)
+    {
+        if (LoadEmbeddedShape2D(PerVertexColoring ? asset_BasicPerVertexVertexShader_vert : asset_BasicVertexShader_vert,
+            PerVertexColoring ? asset_BasicPerVertexFragmentShader_frag : asset_BasicFragmentShader_frag,
+            PerVertexColoring ? TriangleVerticesColor : TriangleVertices,
+            PerVertexColoring ? sizeof(TriangleVerticesColor) : sizeof(TriangleVertices),
+            TriangleIndices, sizeof(TriangleIndices), sizeof(TriangleIndices[0]),
+            PerVertexColoring, color, Window, WindowCount) >= 0)
+        {
+            rendering("Created Triangle Resources");
+            return BLOCK_SUCCESS_TRUE;
+        }
+        else
+        {
+            error("Cannot Create Triangle Resources");
+            return BLOCK_FAILURE;
+        }
     }
 
-    void DrawTriangle()
+    void Draw(int WindowNumber, bool WireMode, Color color, FloatVector3 Position, FloatVector3 Rotation, FloatVector3 Scale)
     {
-        DrawShape2D(sizeof(TriangleIndices) / sizeof(TriangleIndices[0]));
+        DrawShape2D(WindowNumber, WireMode, color, Position, Rotation, Scale);
+    }
+
+    BlockResult Unload()
+    {
+        return UnloadShape2D();
     }
 
     Triangle(const Triangle&) = delete;
     Triangle& operator=(const Triangle&) = delete;
     Triangle(Triangle&&) = delete;
     Triangle& operator=(Triangle&&) = delete;
-
-};
+private:
+    using Shape2D::LoadShape2D;
+    using Shape2D::LoadEmbeddedShape2D;
+    using Shape2D::DrawShape2D;
+    using Shape2D::UnloadShape2D;
+}; 
 
 
 class Square : public Shape2D
 {
 public:
-    Square(Color color, BlockWindow *Window)
-    {
-        LoadShape2D(
-        "src/Assets/BlockEngine/Shaders/BasicVertexShader.vert",
-        "src/Assets/BlockEngine/Shaders/BasicFragmentShader.frag",
-        SquareVertices,
-        sizeof(SquareVertices),
-        SquareIndices,
-        sizeof(SquareIndices),
-        Window,
-        false,
-        color
-        );
+    Square() = default;
 
-        rendering("Creating Square Resources");
+    BlockResult Create(Color color, Blockwindow **Window, int WindowCount, bool PerVertexColoring)
+    {
+        if (LoadEmbeddedShape2D(PerVertexColoring ? asset_BasicPerVertexVertexShader_vert : asset_BasicVertexShader_vert,
+            PerVertexColoring ? asset_BasicPerVertexFragmentShader_frag : asset_BasicFragmentShader_frag,
+            PerVertexColoring ? SquareVerticesColor : SquareVertices,
+            PerVertexColoring ? sizeof(SquareVerticesColor) : sizeof(SquareVertices),
+            SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]),
+            PerVertexColoring, color, Window, WindowCount) >= 0)
+        {
+            rendering("Created Square Resources");
+            return BLOCK_SUCCESS_TRUE;
+        }
+        else
+        {
+            error("Cannot Create Square Resources");
+            return BLOCK_FAILURE;
+        }
     }
 
-    void DrawSquare()
+    void Draw(int WindowNumber, bool WireMode, Color color, FloatVector3 Position, FloatVector3 Rotation, FloatVector3 Scale)
     {
-        DrawShape2D((sizeof(SquareIndices) / sizeof(SquareIndices[0])));
+        DrawShape2D(WindowNumber, WireMode, color, Position, Rotation, Scale);
     };
+
+    BlockResult Unload()
+    {
+        return UnloadShape2D();
+    }
 
     Square(const Square&) = delete;
     Square& operator=(const Square&) = delete;
     Square(Square&&) = delete;
     Square& operator=(Square&&) = delete;
-
+private:
+    using Shape2D::LoadShape2D;
+    using Shape2D::LoadEmbeddedShape2D;
+    using Shape2D::DrawShape2D;
+    using Shape2D::UnloadShape2D;
 };
 
 

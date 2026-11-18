@@ -11,24 +11,43 @@ mkdir -p "$OUT_DIR/Audio" "$OUT_DIR/Images" "$OUT_DIR/Shaders"
 # Clean old generated headers to prevent stale references
 rm -f "$OUT_DIR/Audio"/*.h "$OUT_DIR/Images"/*.h "$OUT_DIR/Shaders"/*.h
 
+# Runs xxd from the file's own folder so the variable name is only the filename,
+# then adds the asset_ prefix (same style as the shaders).
+embed_bytes() {
+    local f="$1"
+    (cd "$(dirname "$f")" && xxd -i "$(basename "$f")") \
+        | sed -E 's/^unsigned (char|int) /inline const unsigned \1 asset_/'
+}
+
 echo "Generating asset byte arrays..."
 
 # 1. Embed Audio (.mp3, .wav)
 find "$ASSET_DIR/Audio" -type f \( -name "*.mp3" -o -name "*.wav" \) | while read -r f; do
     filename=$(basename "$f" | sed 's/[^a-zA-Z0-9]/_/g')
-    xxd -i "$f" > "$OUT_DIR/Audio/asset_${filename}.h"
+    {
+        echo "#pragma once"
+        embed_bytes "$f"
+    } > "$OUT_DIR/Audio/asset_${filename}.h"
 done
 
 # 2. Embed Images (.png)
 find "$ASSET_DIR/Images" -type f -name "*.png" | while read -r f; do
     filename=$(basename "$f" | sed 's/[^a-zA-Z0-9]/_/g')
-    xxd -i "$f" > "$OUT_DIR/Images/asset_${filename}.h"
+    {
+        echo "#pragma once"
+        embed_bytes "$f"
+    } > "$OUT_DIR/Images/asset_${filename}.h"
 done
 
-# 3. Embed Shaders (.vert, .frag)
+# 3. Embed Shaders (.vert, .frag) as plain text strings
 find "$ASSET_DIR/Shaders" -type f \( -name "*.vert" -o -name "*.frag" \) | while read -r f; do
     filename=$(basename "$f" | sed 's/[^a-zA-Z0-9]/_/g')
-    xxd -i "$f" > "$OUT_DIR/Shaders/asset_${filename}.h"
+    {
+        echo "#pragma once"
+        printf 'inline const char asset_%s[] = R"GLSL(' "$filename"
+        cat "$f"
+        echo ")GLSL\";"
+    } > "$OUT_DIR/Shaders/asset_${filename}.h"
 done
 
 # --- 4. Generate GeneratedAssets.hpp ---

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdbool.h>
-#include "KeyBoard/KeyBoardUtilities.hpp"
+
+#include "Keyboard/Keyboard.hpp"
 
 
 #define BLOCK_RELEASE                0

@@ -4,8 +4,8 @@
 const char* BlockGetErrorString(BlockResult Result) {
     switch (Result)
     {
-        case BLOCK_SUCCESS_TRUE:           return "FALSE";
-        case BLOCK_SUCCESS_FALSE:           return "TRUE";
+        case BLOCK_SUCCESS_TRUE:           return "TRUE";
+        case BLOCK_SUCCESS_FALSE:           return "FALSE";
         case BLOCK_FAILURE:           return "FAILURE";
         case BLOCK_ERR_NULL_POINTER:  return "ERR_NULL_POINTER";
         case BLOCK_ERR_OUT_OF_MEMORY: return "ERR_OUT_OF_MEMORY";

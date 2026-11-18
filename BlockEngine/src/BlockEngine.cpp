@@ -1,5 +1,5 @@
 #include "BlockEngine.hpp"
-#include "Assets/BlockEngine/GeneratedAssets/Images/asset_Brick_icon_png.h"
+#include "Assets/BlockEngine/GeneratedAssets/GeneratedAssets.hpp"
 
 int main() {
     // here we initialize the (Logger, Rendering, Input, Audio ...).
@@ -17,83 +17,112 @@ int main() {
         AudioObject[0].LoadSound("src/Assets/BlockEngine/Audio/StartUp/start.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
         AudioObject[1].LoadSound("src/Assets/BlockEngine/Audio/Sounds/Correct.mp3", BLOCK_SOUND_FLAG_NO_SPATIAL | BLOCK_SOUND_FLAG_NO_PITCH);
 
-        Triangle MyTriangle(Color(0.0f, 0.0f, 0.0f, 255.0f), &Window);
-        Square MySquare(Color(134.0f, 17.0f, 63.0f, 255.0f), &Window);
+        Triangle MyTriangle;
+        MyTriangle.Create(Color(0.0f, 0.0f, 0.0f, 255.0f), &Window.Window, 1, true);
+        Square MySquare;
+        MySquare.Create(Color(134.0f, 17.0f, 63.0f, 255.0f), &Window.Window, 1, true);
         
         Texture2D Brick;
-        Brick.LoadTexture2D("src/Assets/BlockEngine/Images/Block-Engine/Brick-icon.png", BLOCK_NEAREST, BLOCK_NEAREST, BLOCK_TEXTURE_REPEAT, true);
-        Brick.LoadTextureMesh2D("src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVerticesUV, sizeof(SquareVerticesUV), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false);
+        Brick.LoadTexture2D("src/Assets/BlockEngine/Images/Block-Engine/Brick-icon.png", BLOCK_NEAREST, BLOCK_NEAREST, true);
+        Brick.LoadTextureMesh2D("src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVerticesUV, sizeof(SquareVerticesUV), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false, BLOCK_TEXTURE_REPEAT, Color{255.0f, 0.0f, 255.0f, 255.0f}, Color{255.0f, 255.0f, 255.0f, 255.0f}, &Window.Window, 1);
         
         Texture2D EmbeddedBrick;
-        EmbeddedBrick.LoadEmbeddedTexture2D((const char*)BlockEngine_src_Assets_BlockEngine_Images_Block_Engine_Brick_icon_png, sizeof(BlockEngine_src_Assets_BlockEngine_Images_Block_Engine_Brick_icon_png), BLOCK_LINEAR, BLOCK_LINEAR, BLOCK_TEXTURE_REPEAT, true);
-        EmbeddedBrick.LoadTextureMesh2D("src/Assets/BlockEngine/Shaders/BasicVertexTextureShader.vert", "src/Assets/BlockEngine/Shaders/BasicFragmentTextureShader.frag", SquareVerticesUV, sizeof(SquareVerticesUV), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false);
+        EmbeddedBrick.LoadEmbeddedTexture2D((const char*)asset_Brick_icon_png, sizeof(asset_Brick_icon_png), BLOCK_LINEAR, BLOCK_LINEAR, true);
+        EmbeddedBrick.LoadEmbeddedTextureMesh2D(asset_BasicVertexTextureShader_vert, asset_BasicFragmentTextureShader_frag, SquareVerticesUV, sizeof(SquareVerticesUV), SquareIndices, sizeof(SquareIndices), sizeof(SquareIndices[0]), false, BLOCK_TEXTURE_REPEAT, Color{255.0f, 0.0f, 255.0f, 255.0f}, Color{255.0f, 255.0f, 255.0f, 255.0f}, &Window.Window, 1);
 
         Color BGColor = {255.0f,255.0f,160.0f,255.0f};
     
-        bool ChangeBackGroundColor = true;
         bool DrawBrick = true;
         bool DrawEmbeddedBrick = true;
 
+        Color color = {255.0f,255.0f,255.0f,255.0f};
+        int FPS = 0;
+        float dirR = 1.0f, dirG = 1.0f, dirB = 1.0f;
+        float speed = 0.005f;
+
         info("Entering Game Loop");
         while (!Window.WindowShouldClose())
-        {   
-            // Change Audio         
-            if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
+        {
+            if (FPS >= 60)
             {
-                AudioObject[0].PlayOverlappingSound();
+                FPS = 0;
             }
-            if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
+            else
             {
-                AudioObject[1].PlaySound();
-            }
-            if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
-            {
-                AudioObject[1].PlaySound();
-            }
-            if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
-            {
-                AudioObject[0].PlayOverlappingSound();
-            }
-            
-            // Change Rendering 
-            if(KeyEvent(BLOCK_KEY_TAB,BLOCK_PRESS))
-            {
-                BGColor = {(float)(rand() % 256), (float)(rand() % 256), (float)(rand() % 256), (float)(rand() % 256)};
-            }
-            if(KeyEvent(BLOCK_KEY_Q,BLOCK_PRESS))
-            {
-                if (DrawBrick)
+                FPS++;
+                // Change Audio         
+                if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
                 {
-                    DrawBrick = false;
+                    AudioObject[0].PlayOverlappingSound();
                 }
-                else
+                if(KeyEvent(BLOCK_KEY_G,BLOCK_RELEASE))
                 {
-                    DrawBrick = true;
+                    AudioObject[1].PlaySound();
                 }
-            }
-            if(KeyEvent(BLOCK_KEY_W,BLOCK_PRESS))
-            {
-                if (DrawEmbeddedBrick)
+                if(KeyEvent(BLOCK_KEY_H,BLOCK_REPEAT))
                 {
-                    DrawEmbeddedBrick = false;
+                    AudioObject[1].PlaySound();
                 }
-                else
+                if(KeyEvent(BLOCK_KEY_Y,BLOCK_REPEAT))
                 {
-                    DrawEmbeddedBrick = true;
+                    AudioObject[0].PlayOverlappingSound();
                 }
-            }
-            
-            Window.SetBackgroundColor(BGColor);
-            MySquare.DrawSquare();
-            MyTriangle.DrawTriangle();
+                
+                // Change Rendering 
+                if(KeyEvent(BLOCK_KEY_TAB,BLOCK_PRESS))
+                {
+                    BGColor = {(float)(rand() % 256), (float)(rand() % 256), (float)(rand() % 256), (float)(rand() % 256)};
+                }
+                if(KeyEvent(BLOCK_KEY_Q,BLOCK_PRESS))
+                {
+                    if (DrawBrick)
+                    {
+                        DrawBrick = false;
+                    }
+                    else
+                    {
+                        DrawBrick = true;
+                    }
+                }
+                if(KeyEvent(BLOCK_KEY_W,BLOCK_PRESS))
+                {
+                    if (DrawEmbeddedBrick)
+                    {
+                        DrawEmbeddedBrick = false;
+                    }
+                    else
+                    {
+                        DrawEmbeddedBrick = true;
+                    }
+                }
+                if(KeyEvent(BLOCK_KEY_P,BLOCK_PRESS))
+                {
+                    Window.RestoreWindow();
+                }
 
-            
-            if (DrawBrick) {Brick.DrawTexture2D();}
-            if (DrawEmbeddedBrick) {EmbeddedBrick.DrawTexture2D();}
+                Window.SetBackgroundColor(BGColor);
+                MySquare.Draw(1, false, Color{255.0f, 255.0f, 255.0f, 255.0f}, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{0.0f, 0.0f, GetTime()*100}, FloatVector3{1.0f, 1.0f, 1.0f});
+                MyTriangle.Draw(1, false, Color{255.0f, 255.0f, 255.0f, 255.0f}, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{1.0f, 1.0f, 1.0f});
 
-            Window.UpdateWindow();
+                if (color.r >= 1.0f) { color.r = 1.0f; dirR = -1.0f; }
+                if (color.r <= 0.0f) { color.r = 0.0f; dirR =  1.0f; }
+
+                if (color.g >= 1.0f) { color.g = 1.0f; dirG = -1.0f; }
+                if (color.g <= 0.0f) { color.g = 0.0f; dirG =  1.0f; }
+
+                if (color.b >= 1.0f) { color.b = 1.0f; dirB = -1.0f; }
+                if (color.b <= 0.0f) { color.b = 0.0f; dirB =  1.0f; }
+
+                color.r += dirR * speed;
+                color.g += dirG * speed;
+                color.b += dirB * speed;
+                
+                if (DrawBrick) {Brick.Draw(1, false, color, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{1.0f, 1.0f, 1.0f});}
+                if (DrawEmbeddedBrick) {EmbeddedBrick.Draw(1, false, color, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{0.0f, 0.0f, 0.0f}, FloatVector3{1.0f, 1.0f, 1.0f});}
+
+                Window.UpdateWindow();
+            }
         }
-        
         info("Exited Game Loop");
     }
 

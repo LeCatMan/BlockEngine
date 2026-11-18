@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")" || exit 1
 
-rm BlockEngine/Logs/*
-rm Examples/Logs/*
+shopt -s extglob nullglob
+rm -rf !(external)/Logs

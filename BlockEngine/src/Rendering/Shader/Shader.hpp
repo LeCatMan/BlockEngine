@@ -6,6 +6,7 @@
 #include "../Shape/Shape.hpp"
 #include "../Texture/Texture.hpp"
 
+class Shape2D;
 
 /**
  * Shader2D

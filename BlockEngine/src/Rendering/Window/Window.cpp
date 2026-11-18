@@ -1,11 +1,51 @@
 #include "Window.hpp"
 
+
+/**
+ *  returns Aspect ratio as a float like 1.78
+ *  Examples:
+ *  800 × 600 → 800 / 600 = 1.33
+ *  1920 × 1080 → 1.78 (that’s 16:9)
+ *  600 × 600 → 1.0 (a perfect square)
+ */
+float BlockWindow::Aspect()
+{
+    return Height > 0 ? (float)Width / (float)Height : 1.0f;
+}
+
+
+void BlockWindow::framebuffersizecallback(GLFWwindow *window, int WindowWidth, int WindowHeight)
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        if (Isloaded)
+        {
+            glfwMakeContextCurrent(window);
+            //         x  y    width        height
+            glViewport(0, 0, WindowWidth, WindowHeight);
+        }
+        else
+        {
+            warning("Cannot callback the frame buffer size because the window isn't initialized");
+            return;
+        }
+    }
+    else
+    {
+        warning("Cannot callback the frame buffer size because the engine isn't initialized");
+        return;
+    }
+}
+
+
 // Update the viewport to match the window size.
 void FrameBufferSizeCallback(GLFWwindow *Window, int WindowWidth, int WindowHeight)
 {
-    glfwMakeContextCurrent(Window);
-    //         x  y    width        height
-    glViewport(0, 0, WindowWidth, WindowHeight);
+    BlockWindow *Self = (BlockWindow*)glfwGetWindowUserPointer(Window);
+    if (Self)
+    { 
+        Self->framebuffersizecallback(Window, WindowWidth, WindowHeight);
+    }
 }
 
 
@@ -24,6 +64,11 @@ BlockResult BlockWindow::CreateWindow(int WindowWidth, int WindowHeight, const c
                 return BLOCK_ERR_INIT_FAILED;
             }
             glfwMakeContextCurrent(Window);
+
+            glfwSetWindowUserPointer(Window, this);
+
+            Width = WindowWidth;
+            Height = WindowHeight;
 
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
             {
@@ -70,10 +115,9 @@ BlockResult BlockWindow::CreateWindow(int WindowWidth, int WindowHeight, const c
             
             glfwSetWindowIcon(Window, ImageCount, Image);
             
-            InitializeInput(this);
+            InitializeInput(Window);
             ExitKey = Exitkey;
 
-            rendering("Rendering engine initialized!");
             rendering("Window initialized!");
             Isloaded = true;
             return BLOCK_SUCCESS_TRUE;
@@ -112,8 +156,9 @@ BlockResult BlockWindow::WindowShouldClose()
 void BlockWindow::UpdateWindow()
 {
     glfwMakeContextCurrent(Window);
+    glfwGetFramebufferSize(Window, &Width, &Height);
     UpdateAudio();
-    UpdateInput(this);
+    UpdateInput(Window); 
     glfwSwapBuffers(Window); // Swaps the front and back buffers of the specified window.
     if (KeyEvent(ExitKey, BLOCK_PRESS))
     {
@@ -148,6 +193,31 @@ void BlockWindow::MakeCurrentWindowContext()
 }
 
 
+BlockResult BlockWindow::SetBackgroundColor(Color color)
+{
+    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
+    {
+        if (Isloaded)
+        {
+            glfwMakeContextCurrent(Window);
+            glClearColor((color.r), (color.g), (color.b), (color.a));
+            glClear(GL_COLOR_BUFFER_BIT);
+            return BLOCK_SUCCESS_TRUE;
+        }
+        else
+        {
+            warning("Cannot change background color because the window is closed");
+            return BLOCK_FAILURE;
+        }
+    }
+    else
+    {
+        warning("Cannot change the background color because the rendering engine is not Initialized");
+        return BLOCK_FAILURE;
+    }
+}
+
+
 BlockResult BlockWindow::CloseWindow()
 {
     if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
@@ -171,31 +241,6 @@ BlockResult BlockWindow::CloseWindow()
     else 
     {
         warning("Cannot close the window because the rendering engine is not Initialized");
-        return BLOCK_FAILURE;
-    }
-}
-
-
-BlockResult BlockWindow::SetBackgroundColor(Color color)
-{
-    if (RenderingInitialized == BLOCK_SUCCESS_TRUE)
-    {
-        if (Isloaded)
-        {
-            glfwMakeContextCurrent(Window);
-            glClearColor((color.r), (color.g), (color.b), (color.a));
-            glClear(GL_COLOR_BUFFER_BIT);
-            return BLOCK_SUCCESS_TRUE;
-        }
-        else
-        {
-            warning("Cannot change background color because the window is closed");
-            return BLOCK_FAILURE;
-        }
-    }
-    else
-    {
-        warning("Cannot change the background color because the rendering engine is not Initialized");
         return BLOCK_FAILURE;
     }
 }
@@ -226,6 +271,13 @@ BlockWindow::~BlockWindow()
         return;
     }
 }
+
+
+double GetTime()
+{
+    return glfwGetTime();
+}
+
 
 
 
