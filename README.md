@@ -14,7 +14,7 @@ Block Engine provides a simple interface for building games through **its C and 
 
 ## Preview
 
-<img width="800" height="600" alt="Block Engine Alpha 0.76 Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/Preview/BlockEngineAlpha0.76Preview.mp4" />
+<img width="800" height="600" alt="Block Engine Alpha 0.76 Preview" src="BlockEngine/src/Assets/BlockEngine/Images/Block-Engine/Preview/BlockEngineAlpha0.76Preview-4.gif" />
 
 ---
 
