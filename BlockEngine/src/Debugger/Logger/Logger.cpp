@@ -1,4 +1,22 @@
 #include "Logger.hpp"
+ 
+
+#ifdef _WIN32
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+    #include <windows.h>
+    #include <direct.h>
+    #define MAKE_DIR(path) _mkdir(path)
+#else
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <unistd.h>
+    #define MAKE_DIR(path) mkdir(path, 0777)
+#endif
 
 typedef struct {
     int r;

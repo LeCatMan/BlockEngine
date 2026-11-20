@@ -1,6 +1,8 @@
 #include "BlockEngine.hpp"
 #include "Assets/BlockEngine/GeneratedAssets/GeneratedAssets.hpp"
 
+
+
 int main() {
     // here we initialize the (Logger, Rendering, Input, Audio ...).
     InitializeBlockEngine(1.0f);
@@ -50,6 +52,7 @@ int main() {
             else
             {
                 FPS++;
+                
                 // Change Audio         
                 if(KeyEvent(BLOCK_KEY_F,BLOCK_PRESS))
                 {
